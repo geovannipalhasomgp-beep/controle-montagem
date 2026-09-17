@@ -1,3 +1,25 @@
+// LISTA FIXA DE PEÇAS DE ARRANQUE E ALTERNADOR (NÃO PRECISA DIGITAR)
+const CATALAGO_PECAS = [
+    // Arranque
+    "BENDIX (PINHÃO)",
+    "AUTOMÁTICO DO ARRANQUE",
+    "RELÉ DO AUTOMÁTICO",
+    "INDUZIDO (ARRANQUE)",
+    "PORTA ESCOVAS (ARRANQUE)",
+    "BOBINA DE CAMPO",
+    "MANCAL DIANTEIRO",
+    "MANCAL TRASEIRO",
+    // Alternador
+    "REGULADOR DE VOLTAGEM",
+    "PLACA DE DIODOS (RETIFICADORA)",
+    "ROTOR (ALTERNADOR)",
+    "ESTATOR (ALTERNADOR)",
+    "ROLAMENTO DIANTEIRO",
+    "ROLAMENTO TRASEIRO",
+    "POLIA DO ALTERNADOR",
+    "PORTA ESCOVAS (ALTERNADOR)"
+];
+
 let estoque = JSON.parse(localStorage.getItem('estoquePeças')) || {};
 let historico = JSON.parse(localStorage.getItem('historicoServicos')) || [];
 let pecasDoServicoAtual = [];
@@ -5,16 +27,53 @@ let pecasDoServicoAtual = [];
 document.addEventListener('DOMContentLoaded', () => {
     const inputData = document.getElementById('dataServico');
     if (inputData) inputData.valueAsDate = new Date();
+    
+    carregarOpcoesCadastro();
     renderizarEstoque();
     renderizarHistorico();
 });
 
+// Preenche o menu com as peças pré-definidas
+function carregarOpcoesCadastro() {
+    const select = document.getElementById('selectPecaCadastro');
+    if (!select) return;
+
+    select.innerHTML = '<option value="">-- Selecione a Peça --</option>';
+    CATALAGO_PECAS.forEach(peca => {
+        select.innerHTML += `<option value="${peca}">${peca}</option>`;
+    });
+}
+
+function adicionarEstoque() {
+    const select = document.getElementById('selectPecaCadastro');
+    const inputQtd = document.getElementById('qtdPecaEstoque');
+    
+    const peca = select.value;
+    const qtd = parseInt(inputQtd.value);
+
+    if (!peca) {
+        alert("Selecione uma peça da lista!");
+        return;
+    }
+
+    if (isNaN(qtd) || qtd <= 0) {
+        alert("Informe uma quantidade válida!");
+        return;
+    }
+
+    estoque[peca] = (estoque[peca] || 0) + qtd;
+    inputQtd.value = 1;
+    select.value = '';
+    
+    renderizarEstoque();
+}
+
 function renderizarEstoque() {
     const lista = document.getElementById('listaEstoque');
-    const selectPeca = document.getElementById('selectPecaEstoque');
+    const selectServico = document.getElementById('selectPecaServico');
     
     if (lista) lista.innerHTML = '';
-    if (selectPeca) selectPeca.innerHTML = '<option value="">-- Selecione --</option>';
+    if (selectServico) selectServico.innerHTML = '<option value="">-- Selecione uma Peça --</option>';
 
     for (let peca in estoque) {
         const qtd = estoque[peca];
@@ -24,61 +83,33 @@ function renderizarEstoque() {
             status = '<span class="badge-alerta">⚠️ COMPRAR</span>';
         }
 
-        if (lista) {
+        if (lista && qtd > 0) {
             lista.innerHTML += `
                 <tr>
                     <td><b>${peca}</b></td>
                     <td>${qtd} un</td>
                     <td>${status}</td>
-                    <td><button class="btn-danger" onclick="removerEstoque('${peca}')">🗑️</button></td>
                 </tr>
             `;
         }
 
-        if (selectPeca) {
-            selectPeca.innerHTML += `<option value="${peca}">${peca} (${qtd} em estoque)</option>`;
+        if (selectServico && qtd > 0) {
+            selectServico.innerHTML += `<option value="${peca}">${peca} (${qtd} em estoque)</option>`;
         }
     }
 
     localStorage.setItem('estoquePeças', JSON.stringify(estoque));
 }
 
-function adicionarEstoque() {
-    const inputNome = document.getElementById('nomePecaEstoque');
-    const inputQtd = document.getElementById('qtdPecaEstoque');
-    
-    const nome = inputNome.value.trim().toUpperCase();
-    const qtd = parseInt(inputQtd.value);
-
-    if (!nome || isNaN(qtd) || qtd < 0) {
-        alert("Preencha o nome da peça e uma quantidade válida.");
-        return;
-    }
-
-    estoque[nome] = (estoque[nome] || 0) + qtd;
-    
-    inputNome.value = '';
-    inputQtd.value = '';
-    
-    renderizarEstoque();
-}
-
-function removerEstoque(peca) {
-    if (confirm(`Remover "${peca}" do estoque?`)) {
-        delete estoque[peca];
-        renderizarEstoque();
-    }
-}
-
 function adicionarPecaServico() {
-    const selectPeca = document.getElementById('selectPecaEstoque');
+    const select = document.getElementById('selectPecaServico');
     const inputQtd = document.getElementById('qtdUsoPeca');
     
-    const peca = selectPeca.value;
+    const peca = select.value;
     const qtd = parseInt(inputQtd.value);
 
     if (!peca) {
-        alert("Selecione uma peça da lista.");
+        alert("Selecione uma peça disponível!");
         return;
     }
 
@@ -88,13 +119,13 @@ function adicionarPecaServico() {
     }
 
     if (qtd > estoque[peca]) {
-        alert(`Estoque insuficiente! Disponível: ${estoque[peca]} un.`);
+        alert(`Estoque insuficiente! Você tem apenas ${estoque[peca]} unidade(s).`);
         return;
     }
 
     pecasDoServicoAtual.push({ nome: peca, qtd: qtd });
     inputQtd.value = 1;
-    selectPeca.value = '';
+    select.value = '';
     
     renderizarPecasServicoTemp();
 }
@@ -142,7 +173,7 @@ function salvarServico() {
             estoque[item.nome] -= item.qtd;
             
             if (estoque[item.nome] <= 1) {
-                alertasCompra.push(`${item.nome} (Sobra: ${estoque[item.nome]})`);
+                alertasCompra.push(`${item.nome} (Restante: ${estoque[item.nome]} un)`);
             }
         }
     });
@@ -157,7 +188,7 @@ function salvarServico() {
     localStorage.setItem('historicoServicos', JSON.stringify(historico));
 
     if (alertasCompra.length > 0) {
-        alert(`Serviço salvo!\n\n⚠️ ALERTA DE REPOSIÇÃO:\nPeças com estoque baixo:\n- ${alertasCompra.join('\n- ')}`);
+        alert(`Serviço salvo com sucesso!\n\n⚠️ ALERTA DE COMPRA:\nEstoque crítico para:\n- ${alertasCompra.join('\n- ')}`);
     } else {
         alert("Serviço registrado e estoque atualizado!");
     }
