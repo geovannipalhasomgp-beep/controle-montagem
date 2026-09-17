@@ -1,4 +1,3 @@
-// LISTA FIXA DE PEÇAS DE ARRANQUE E ALTERNADOR (NÃO PRECISA DIGITAR)
 const CATALAGO_PECAS = [
     // Arranque
     "BENDIX (PINHÃO)",
@@ -33,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderizarHistorico();
 });
 
-// Preenche o menu com as peças pré-definidas
 function carregarOpcoesCadastro() {
     const select = document.getElementById('selectPecaCadastro');
     if (!select) return;
