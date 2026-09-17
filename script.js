@@ -1,9 +1,7 @@
-// DADOS SALVOS NO NAVEGADOR
 let estoque = JSON.parse(localStorage.getItem('estoquePeças')) || {};
 let historico = JSON.parse(localStorage.getItem('historicoServicos')) || [];
 let pecasDoServicoAtual = [];
 
-// DEFINIR DATA ATUAL NO INPUT AO CARREGAR
 document.addEventListener('DOMContentLoaded', () => {
     const inputData = document.getElementById('dataServico');
     if (inputData) inputData.valueAsDate = new Date();
@@ -11,20 +9,19 @@ document.addEventListener('DOMContentLoaded', () => {
     renderizarHistorico();
 });
 
-// 1. GERENCIAMENTO DE ESTOQUE
 function renderizarEstoque() {
     const lista = document.getElementById('listaEstoque');
     const selectPeca = document.getElementById('selectPecaEstoque');
     
     if (lista) lista.innerHTML = '';
-    if (selectPeca) selectPeca.innerHTML = '<option value="">-- Selecione uma Peça --</option>';
+    if (selectPeca) selectPeca.innerHTML = '<option value="">-- Selecione --</option>';
 
     for (let peca in estoque) {
         const qtd = estoque[peca];
-        let status = '<span style="color: #00f3ff;">OK</span>';
+        let status = '<span class="badge-ok">OK</span>';
         
         if (qtd <= 1) {
-            status = '<span style="color: #ff0055; font-weight: bold; text-shadow: 0 0 8px #ff0055;">⚠️ PEDIR COMPRA</span>';
+            status = '<span class="badge-alerta">⚠️ COMPRAR</span>';
         }
 
         if (lista) {
@@ -33,13 +30,13 @@ function renderizarEstoque() {
                     <td><b>${peca}</b></td>
                     <td>${qtd} un</td>
                     <td>${status}</td>
-                    <td><button class="btn-deletar" onclick="removerEstoque('${peca}')">🗑️</button></td>
+                    <td><button class="btn-danger" onclick="removerEstoque('${peca}')">🗑️</button></td>
                 </tr>
             `;
         }
 
         if (selectPeca) {
-            selectPeca.innerHTML += `<option value="${peca}">${peca} (Disp: ${qtd})</option>`;
+            selectPeca.innerHTML += `<option value="${peca}">${peca} (${qtd} em estoque)</option>`;
         }
     }
 
@@ -54,28 +51,25 @@ function adicionarEstoque() {
     const qtd = parseInt(inputQtd.value);
 
     if (!nome || isNaN(qtd) || qtd < 0) {
-        alert("Digite o nome da peça e uma quantidade válida.");
+        alert("Preencha o nome da peça e uma quantidade válida.");
         return;
     }
 
-    // Soma se já existir ou cria novo
     estoque[nome] = (estoque[nome] || 0) + qtd;
     
     inputNome.value = '';
     inputQtd.value = '';
     
     renderizarEstoque();
-    alert(`Peça "${nome}" salva com sucesso no estoque!`);
 }
 
 function removerEstoque(peca) {
-    if (confirm(`Deseja remover a peça "${peca}" do estoque?`)) {
+    if (confirm(`Remover "${peca}" do estoque?`)) {
         delete estoque[peca];
         renderizarEstoque();
     }
 }
 
-// 2. ADICIONAR PEÇA AO SERVIÇO ATUAL
 function adicionarPecaServico() {
     const selectPeca = document.getElementById('selectPecaEstoque');
     const inputQtd = document.getElementById('qtdUsoPeca');
@@ -84,17 +78,17 @@ function adicionarPecaServico() {
     const qtd = parseInt(inputQtd.value);
 
     if (!peca) {
-        alert("Selecione uma peça da lista do estoque.");
+        alert("Selecione uma peça da lista.");
         return;
     }
 
     if (isNaN(qtd) || qtd <= 0) {
-        alert("Digite uma quantidade válida.");
+        alert("Informe uma quantidade válida.");
         return;
     }
 
     if (qtd > estoque[peca]) {
-        alert(`Quantidade indisponível! Estoque atual de ${peca}: ${estoque[peca]} un.`);
+        alert(`Estoque insuficiente! Disponível: ${estoque[peca]} un.`);
         return;
     }
 
@@ -116,7 +110,7 @@ function renderizarPecasServicoTemp() {
             <tr>
                 <td>${item.nome}</td>
                 <td>${item.qtd} un</td>
-                <td><button class="btn-deletar" onclick="removerPecaServicoTemp(${index})">🗑️</button></td>
+                <td><button class="btn-danger" onclick="removerPecaServicoTemp(${index})">🗑️</button></td>
             </tr>
         `;
     });
@@ -127,35 +121,32 @@ function removerPecaServicoTemp(index) {
     renderizarPecasServicoTemp();
 }
 
-// 3. SALVAR SERVIÇO E DAR BAIXA AUTOMÁTICA
 function salvarServico() {
     const prefixo = document.getElementById('prefixo').value.trim().toUpperCase();
     const data = document.getElementById('dataServico').value;
 
     if (!prefixo || !data) {
-        alert("Preencha o Prefixo e a Data do Serviço.");
+        alert("Informe o Prefixo e a Data.");
         return;
     }
 
     if (pecasDoServicoAtual.length === 0) {
-        alert("Adicione pelo menos uma peça antes de salvar.");
+        alert("Inclua pelo menos uma peça.");
         return;
     }
 
     let alertasCompra = [];
 
-    // Dar baixa no estoque
     pecasDoServicoAtual.forEach(item => {
         if (estoque[item.nome] !== undefined) {
             estoque[item.nome] -= item.qtd;
             
             if (estoque[item.nome] <= 1) {
-                alertasCompra.push(`${item.nome} (Restam: ${estoque[item.nome]} un)`);
+                alertasCompra.push(`${item.nome} (Sobra: ${estoque[item.nome]})`);
             }
         }
     });
 
-    // Gravar no histórico
     historico.push({
         id: Date.now(),
         prefixo: prefixo,
@@ -166,12 +157,11 @@ function salvarServico() {
     localStorage.setItem('historicoServicos', JSON.stringify(historico));
 
     if (alertasCompra.length > 0) {
-        alert(`✅ Serviço registrado com sucesso!\n\n⚠️ ALERTA DE COMPRA:\nAs seguintes peças estão terminando:\n- ${alertasCompra.join('\n- ')}`);
+        alert(`Serviço salvo!\n\n⚠️ ALERTA DE REPOSIÇÃO:\nPeças com estoque baixo:\n- ${alertasCompra.join('\n- ')}`);
     } else {
-        alert("✅ Serviço registrado e baixa efetuada no estoque!");
+        alert("Serviço registrado e estoque atualizado!");
     }
 
-    // Limpar campos
     document.getElementById('prefixo').value = '';
     pecasDoServicoAtual = [];
     renderizarPecasServicoTemp();
@@ -179,7 +169,6 @@ function salvarServico() {
     renderizarHistorico();
 }
 
-// 4. HISTÓRICO E BUSCA
 function renderizarHistorico(listaParaExibir = historico) {
     const tabela = document.getElementById('listaHistorico');
     if (!tabela) return;
@@ -195,14 +184,14 @@ function renderizarHistorico(listaParaExibir = historico) {
                 <td>${dataFormatada}</td>
                 <td><b>${item.prefixo}</b></td>
                 <td>${pecasTexto}</td>
-                <td><button class="btn-deletar" onclick="removerHistorico(${item.id})">🗑️</button></td>
+                <td><button class="btn-danger" onclick="removerHistorico(${item.id})">🗑️</button></td>
             </tr>
         `;
     });
 }
 
 function removerHistorico(id) {
-    if (confirm("Deseja apagar este registro do histórico?")) {
+    if (confirm("Apagar registro do histórico?")) {
         historico = historico.filter(item => item.id !== id);
         localStorage.setItem('historicoServicos', JSON.stringify(historico));
         renderizarHistorico();
@@ -218,7 +207,6 @@ function filtrarHistorico() {
     renderizarHistorico(resultado);
 }
 
-// 5. RELATÓRIO PDF
 function gerarPDF() {
     if (historico.length === 0) {
         alert("Nenhum histórico para exportar.");
@@ -242,7 +230,7 @@ function gerarPDF() {
         head: [['Data', 'Prefixo', 'Peças Utilizadas']],
         body: dadosTabela,
         theme: 'grid',
-        headStyles: { fillColor: [8, 10, 16] }
+        headStyles: { fillColor: [52, 73, 94] }
     });
 
     doc.save(`relatorio_montagens_${new Date().toISOString().slice(0,10)}.pdf`);
