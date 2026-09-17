@@ -223,12 +223,14 @@ function removerHistorico(id) {
     if (confirm("Apagar registro do histórico?")) {
         historico = historico.filter(item => item.id !== id);
         localStorage.setItem('historicoServicos', JSON.stringify(historico));
-        renderizarHistorico();
+        
+        // Atualiza a visualização respeitando o filtro ativo na tela
+        filtrarHistorico();
     }
 }
 
 function filtrarHistorico() {
-    const busca = document.getElementById('busca').value.toLowerCase();
+    const busca = document.getElementById('busca').value.toLowerCase().trim();
     const resultado = historico.filter(item => {
         const dataFormatada = item.data.split('-').reverse().join('/');
         return item.prefixo.toLowerCase().includes(busca) || dataFormatada.includes(busca);
@@ -237,8 +239,16 @@ function filtrarHistorico() {
 }
 
 function gerarPDF() {
-    if (historico.length === 0) {
-        alert("Nenhum histórico para exportar.");
+    const busca = document.getElementById('busca').value.toLowerCase().trim();
+    
+    // Filtra apenas o que está visível na busca (se busca estiver vazia, gera de tudo)
+    const dadosParaExportar = historico.filter(item => {
+        const dataFormatada = item.data.split('-').reverse().join('/');
+        return item.prefixo.toLowerCase().includes(busca) || dataFormatada.includes(busca);
+    });
+
+    if (dadosParaExportar.length === 0) {
+        alert("Nenhum registro encontrado para exportar.");
         return;
     }
 
@@ -246,9 +256,10 @@ function gerarPDF() {
     const doc = new jsPDF();
 
     doc.setFontSize(16);
-    doc.text("RELATÓRIO DE MONTAGENS E MANUTENÇÃO", 14, 15);
+    const titulo = busca ? `RELATÓRIO DE MONTAGENS - BUSCA: "${busca.toUpperCase()}"` : "RELATÓRIO DE MONTAGENS E MANUTENÇÃO";
+    doc.text(titulo, 14, 15);
 
-    const dadosTabela = historico.map(item => [
+    const dadosTabela = dadosParaExportar.map(item => [
         item.data.split('-').reverse().join('/'),
         item.prefixo,
         item.pecas.map(p => `${p.nome} (${p.qtd}x)`).join('\n')
