@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Montagem e Estoque</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <!-- CABEÇALHO HERO ESTILIZADO EM AZUL -->
+        <header class="hero-header">
+            <div class="logo-container">
+                <div class="logo-icon">⚡</div>
+                <div>
+                    <h1>SISTEMA DE MONTAGEM & ESTOQUE</h1>
+                    <p class="subtitulo">Controle de Motores de Arranque & Alternadores</p>
+                </div>
+            </div>
+            <div class="status-badge">
+                <span class="dot-online"></span> Oficina Online
+            </div>
+        </header>
+
+        <!-- REGISTRO DE SERVIÇO COMPLETO -->
+        <section class="card">
+            <h2>Novo Registro de Serviço</h2>
+            
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="tipo">Tipo de Equipamento:</label>
+                    <select id="tipo" required>
+                        <option value="Motor de Arranque">Motor de Arranque</option>
+                        <option value="Alternador">Alternador</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="prefixo">Prefixo / Identificação:</label>
+                    <input type="text" id="prefixo" placeholder="Ex: M-102 ou Placa/Frota" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="data-servico">Data do Serviço:</label>
+                <input type="date" id="data-servico" required>
+            </div>
+
+            <hr class="divisor">
+
+            <h3>Peças Utilizadas Neste Serviço</h3>
+            
+            <!-- ÁREA DE ADICIONAR PEÇAS -->
+            <div class="grid-peca">
+                <div class="form-group">
+                    <label for="peca">Selecione a Peça:</label>
+                    <select id="peca">
+                        <option value="">-- Selecione a Peça --</option>
+                        <optgroup label="Motor de Arranque">
+                            <option value="Bendix / Impulsor">Bendix / Impulsor</option>
+                            <option value="Automático">Automático</option>
+                            <option value="Relé do Automático">Relé do Automático</option>
+                            <option value="Induzido">Induzido</option>
+                            <option value="Porta-Escovas">Porta-Escovas</option>
+                            <option value="Tampa Traseira (Arranque)">Tampa Traseira (Arranque)</option>
+                            <option value="Tampa Dianteira (Arranque)">Tampa Dianteira (Arranque)</option>
+                            <option value="Kit Parafuso (Arranque)">Kit Parafuso (Arranque)</option>
+                        </optgroup>
+                        <optgroup label="Alternador">
+                            <option value="Placa de Diodos">Placa de Diodos</option>
+                            <option value="Regulador de Voltagem">Regulador de Voltagem</option>
+                            <option value="Rotor">Rotor</option>
+                            <option value="Estator">Estator</option>
+                            <option value="Polia">Polia</option>
+                            <option value="Rolamento">Rolamento</option>
+                            <option value="Tampa Traseira (Alternador)">Tampa Traseira (Alternador)</option>
+                            <option value="Tampa Dianteira (Alternador)">Tampa Dianteira (Alternador)</option>
+                            <option value="Kit Parafuso (Alternador)">Kit Parafuso (Alternador)</option>
+                        </optgroup>
+                        <option value="Outros">Outros</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantidade">Qtd:</label>
+                    <input type="number" id="quantidade" value="1" min="1">
+                </div>
+
+                <div class="form-group btn-align">
+                    <button type="button" id="btn-add-peca" class="btn btn-add">+ Adicionar Peça</button>
+                </div>
+            </div>
+
+            <!-- LISTA TEMPORÁRIA DAS PEÇAS ADICIONADAS PARA O MESMO PREFIXO -->
+            <div class="lista-temp-container">
+                <h4>Peças Incluídas no Prefixo Atual:</h4>
+                <ul id="lista-pecas-temp">
+                    <!-- As peças adicionadas vão aparecer aqui -->
+                </ul>
+            </div>
+
+            <button type="button" id="btn-salvar-servico" class="btn btn-salvar">Salvar Serviço Completo</button>
+        </section>
+
+        <!-- TABELA DE HISTÓRICO COM BUSCA -->
+        <section class="card">
+            <div class="header-historico">
+                <h2>Histórico de Movimentações</h2>
+                <button id="btn-pdf" class="btn btn-pdf">Gerar Relatório em PDF</button>
+            </div>
+            
+            <!-- ÁREA DE PESQUISA E FILTROS -->
+            <div class="grid-busca">
+                <div class="form-group">
+                    <label for="busca-prefixo">Buscar por Prefixo:</label>
+                    <input type="text" id="busca-prefixo" placeholder="Digite o prefixo...">
+                </div>
+
+                <div class="form-group">
+                    <label for="busca-data">Filtrar por Data:</label>
+                    <input type="date" id="busca-data">
+                </div>
+            </div>
+
+            <table id="tabela-historico">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Tipo</th>
+                        <th>Prefixo</th>
+                        <th>Peças Utilizadas</th>
+                        <th style="text-align: center;">Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Os registros vão aparecer aqui via JavaScript -->
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
