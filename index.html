@@ -11,106 +11,88 @@
 <body>
 
     <div class="container">
-        <!-- HEADER HUD NEON -->
-        <header class="hero-header">
-            <div class="logo-container">
-                <div class="logo-icon">🔧</div>
-                <div>
-                    <h1>CONTROLE DE MONTAGEM</h1>
-                    <p class="subtitulo">// SISTEMA DE GESTÃO DE OFICINA</p>
-                </div>
-            </div>
-            <div class="status-badge">
-                <span class="dot-online"></span> ONLINE
-            </div>
+        <header>
+            <h1>🔧 Controle de Montagem & Estoque</h1>
+            <p>Sistema de Gestão de Peças e Serviços</p>
         </header>
 
-        <!-- CARD 1: PAINEL DE ESTOQUE DE PEÇAS -->
-        <section class="card">
-            <h2>📦 Gestão de Estoque de Peças</h2>
-            <div class="form-row" style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <div class="form-group" style="flex: 2;">
+        <!-- CARDS DE ENTRADA -->
+        <div class="grid">
+            <!-- PAINEL DE ESTOQUE -->
+            <div class="card">
+                <h2>📦 Gestão de Estoque</h2>
+                <div class="form-group">
                     <label>Nome da Peça</label>
-                    <input type="text" id="nomePecaEstoque" placeholder="Ex: Bendix, Induzido, Automático">
+                    <input type="text" id="nomePecaEstoque" placeholder="Ex: Bendix">
                 </div>
-                <div class="form-group" style="flex: 1;">
+                <div class="form-group">
                     <label>Quantidade</label>
-                    <input type="number" id="qtdPecaEstoque" placeholder="Qtd" min="0">
+                    <input type="number" id="qtdPecaEstoque" placeholder="Ex: 5" min="0">
                 </div>
-                <div style="display: flex; align-items: flex-end;">
-                    <button class="btn btn-add" onclick="adicionarEstoque()">Cadastrar Peça</button>
-                </div>
+                <button class="btn btn-add" onclick="adicionarEstoque()">Adicionar ao Estoque</button>
+
+                <table class="tabela-compacta">
+                    <thead>
+                        <tr>
+                            <th>Peça</th>
+                            <th>Qtd</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaEstoque"></tbody>
+                </table>
             </div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Peça</th>
-                        <th>Qtd Atual</th>
-                        <th>Status</th>
-                        <th style="width: 80px;">Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="listaEstoque"></tbody>
-            </table>
-        </section>
-
-        <!-- CARD 2: REGISTRO DE MONTAGEM E SERVIÇO -->
-        <section class="card">
-            <h2>📝 Lançamento de Montagem</h2>
-            
-            <div class="form-row" style="display: flex; gap: 15px; margin-bottom: 15px;">
-                <div class="form-group" style="flex: 1;">
+            <!-- REGISTRO DE SERVIÇO -->
+            <div class="card">
+                <h2>📝 Lançar Montagem</h2>
+                <div class="form-group">
                     <label>Prefixo / Equipamento</label>
                     <input type="text" id="prefixo" placeholder="Ex: ARR-102">
                 </div>
-                <div class="form-group" style="flex: 1;">
-                    <label>Data do Serviço</label>
+                <div class="form-group">
+                    <label>Data</label>
                     <input type="date" id="dataServico">
                 </div>
-            </div>
 
-            <hr class="divisor">
-
-            <h3>Adicionar Peças Utilizadas</h3>
-            <div class="form-row" style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <div class="form-group" style="flex: 2;">
-                    <label>Selecione a Peça do Estoque</label>
-                    <select id="selectPecaEstoque">
-                        <option value="">-- Selecione uma Peça --</option>
-                    </select>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 2;">
+                        <label>Peça</label>
+                        <select id="selectPecaEstoque">
+                            <option value="">-- Selecione --</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Qtd</label>
+                        <input type="number" id="qtdUsoPeca" value="1" min="1">
+                    </div>
                 </div>
-                <div class="form-group" style="flex: 1;">
-                    <label>Qtd Usada</label>
-                    <input type="number" id="qtdUsoPeca" value="1" min="1">
-                </div>
-                <div style="display: flex; align-items: flex-end;">
-                    <button class="btn btn-add" onclick="adicionarPecaServico()">+ Adicionar Peça</button>
-                </div>
+                <button class="btn btn-add" onclick="adicionarPecaServico()">+ Incluir Peça</button>
+
+                <table class="tabela-compacta">
+                    <thead>
+                        <tr>
+                            <th>Peça Selecionada</th>
+                            <th>Qtd</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaPecasTemp"></tbody>
+                </table>
+
+                <button class="btn btn-primary" onclick="salvarServico()">💾 Salvar e Dar Baixa</button>
             </div>
+        </div>
 
-            <table style="margin-bottom: 20px;">
-                <thead>
-                    <tr>
-                        <th>Peça Adicionada</th>
-                        <th>Qtd</th>
-                        <th style="width: 80px;">Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="listaPecasTemp"></tbody>
-            </table>
-
-            <button class="btn btn-salvar" onclick="salvarServico()">💾 Registrar e Dar Baixa no Estoque</button>
-        </section>
-
-        <!-- CARD 3: HISTÓRICO E GERADOR DE PDF -->
-        <section class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h2>📋 Histórico de Registros</h2>
-                <button class="btn btn-pdf" onclick="gerarPDF()">📄 Exportar Relatório em PDF</button>
+        <!-- HISTÓRICO -->
+        <div class="card" style="margin-top: 20px;">
+            <div class="card-header">
+                <h2>📋 Histórico de Serviços</h2>
+                <button class="btn btn-secondary" onclick="gerarPDF()">📄 Exportar PDF</button>
             </div>
-
-            <div class="form-group" style="margin-bottom: 15px;">
+            
+            <div class="form-group">
                 <input type="text" id="busca" placeholder="🔍 Buscar por Prefixo ou Data..." onkeyup="filtrarHistorico()">
             </div>
 
@@ -120,12 +102,12 @@
                         <th>Data</th>
                         <th>Prefixo</th>
                         <th>Peças Utilizadas</th>
-                        <th style="width: 80px;">Ações</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody id="listaHistorico"></tbody>
             </table>
-        </section>
+        </div>
     </div>
 
     <script src="script.js"></script>
