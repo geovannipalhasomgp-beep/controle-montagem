@@ -4,9 +4,319 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Montagem & Estoque</title>
-    <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        :root {
+            --bg-main: #0b0f19;
+            --card-bg: rgba(17, 24, 39, 0.85);
+            --card-border: rgba(59, 130, 246, 0.25);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            
+            /* Cores Neon Azul */
+            --neon-blue: #00f2fe;
+            --neon-blue-glow: rgba(0, 242, 254, 0.4);
+            --accent-blue: #3b82f6;
+            --accent-blue-hover: #2563eb;
+            
+            --success-green: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.4);
+            
+            --danger-red: #ef4444;
+            --danger-glow: rgba(239, 68, 68, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(0, 242, 254, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 25px 15px;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+        }
+
+        /* Header Principal */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 0 15px var(--neon-blue-glow), 0 0 30px rgba(0, 242, 254, 0.2);
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        /* Layout Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards Estilizados com Efeito Vidro (Glassmorphism) */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 14px;
+            padding: 22px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(0, 242, 254, 0.45);
+            box-shadow: 0 10px 35px 0 rgba(0, 242, 254, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .card h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--neon-blue);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-shadow: 0 0 8px var(--neon-blue-glow);
+        }
+
+        .card h3 {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin: 20px 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        /* Formulários */
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--neon-blue);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 11px 14px;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            font-size: 14px;
+            color: #ffffff;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+
+        input::placeholder {
+            color: #6b7280;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 12px var(--neon-blue-glow);
+            background: rgba(15, 23, 42, 0.95);
+        }
+
+        select option {
+            background-color: #0f172a;
+            color: #ffffff;
+        }
+
+        /* Botões com Animações Neon */
+        .btn {
+            padding: 11px 18px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .btn:active {
+            transform: scale(0.97) !important;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(59, 130, 246, 0.25));
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            width: 100%;
+            margin-bottom: 16px;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.15);
+        }
+
+        .btn-add:hover {
+            background: linear-gradient(135deg, var(--neon-blue), var(--accent-blue));
+            color: #090d16;
+            font-weight: 700;
+            box-shadow: 0 0 20px var(--neon-blue-glow), 0 0 30px rgba(0, 242, 254, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #ffffff;
+            width: 100%;
+            margin-top: 10px;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #34d399, #10b981);
+            box-shadow: 0 0 22px var(--success-glow);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-red);
+            color: #ffffff;
+            box-shadow: 0 0 12px var(--danger-glow);
+            transform: scale(1.08);
+        }
+
+        /* Tabelas */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 11px 12px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        th {
+            background-color: rgba(15, 23, 42, 0.8);
+            color: var(--neon-blue);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.8px;
+            border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+        }
+
+        th:first-child { border-top-left-radius: 6px; }
+        th:last-child { border-top-right-radius: 6px; }
+
+        td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #e5e7eb;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background-color: rgba(59, 130, 246, 0.08);
+        }
+
+        .tabela-compacta th, .tabela-compacta td {
+            padding: 8px 10px;
+            font-size: 12px;
+        }
+
+        .badge-ok {
+            color: #34d399;
+            font-weight: 600;
+            text-shadow: 0 0 8px rgba(52, 211, 153, 0.4);
+        }
+
+        .badge-alerta {
+            color: #fbbf24;
+            font-weight: 600;
+            text-shadow: 0 0 8px rgba(251, 191, 36, 0.4);
+        }
+    </style>
 </head>
 <body>
 
@@ -114,6 +424,281 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        const CATALAGO_PECAS = [
+            // Arranque
+            "BENDIX (PINHÃO)",
+            "AUTOMÁTICO DO ARRANQUE",
+            "RELÉ DO AUTOMÁTICO",
+            "INDUZIDO (ARRANQUE)",
+            "PORTA ESCOVAS (ARRANQUE)",
+            "BOBINA DE CAMPO",
+            "MANCAL DIANTEIRO",
+            "MANCAL TRASEIRO",
+            // Alternador
+            "REGULADOR DE VOLTAGEM",
+            "PLACA DE DIODOS (RETIFICADORA)",
+            "ROTOR (ALTERNADOR)",
+            "ESTATOR (ALTERNADOR)",
+            "ROLAMENTO DIANTEIRO",
+            "ROLAMENTO TRASEIRO",
+            "POLIA DO ALTERNADOR",
+            "PORTA ESCOVAS (ALTERNADOR)"
+        ];
+
+        let estoque = JSON.parse(localStorage.getItem('estoquePeças')) || {};
+        let historico = JSON.parse(localStorage.getItem('historicoServicos')) || [];
+        let pecasDoServicoAtual = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputData = document.getElementById('dataServico');
+            if (inputData) inputData.valueAsDate = new Date();
+            
+            carregarOpcoesCadastro();
+            renderizarEstoque();
+            renderizarHistorico();
+        });
+
+        function carregarOpcoesCadastro() {
+            const select = document.getElementById('selectPecaCadastro');
+            if (!select) return;
+
+            select.innerHTML = '<option value="">-- Selecione a Peça --</option>';
+            CATALAGO_PECAS.forEach(peca => {
+                select.innerHTML += `<option value="${peca}">${peca}</option>`;
+            });
+        }
+
+        function adicionarEstoque() {
+            const select = document.getElementById('selectPecaCadastro');
+            const inputQtd = document.getElementById('qtdPecaEstoque');
+            
+            const peca = select.value;
+            const qtd = parseInt(inputQtd.value);
+
+            if (!peca) {
+                alert("Selecione uma peça da lista!");
+                return;
+            }
+
+            if (isNaN(qtd) || qtd <= 0) {
+                alert("Informe uma quantidade válida!");
+                return;
+            }
+
+            estoque[peca] = (estoque[peca] || 0) + qtd;
+            inputQtd.value = 1;
+            select.value = '';
+            
+            renderizarEstoque();
+        }
+
+        function renderizarEstoque() {
+            const lista = document.getElementById('listaEstoque');
+            const selectServico = document.getElementById('selectPecaServico');
+            
+            if (lista) lista.innerHTML = '';
+            if (selectServico) selectServico.innerHTML = '<option value="">-- Selecione uma Peça --</option>';
+
+            for (let peca in estoque) {
+                const qtd = estoque[peca];
+                let status = '<span class="badge-ok">OK</span>';
+                
+                if (qtd <= 1) {
+                    status = '<span class="badge-alerta">⚠️ COMPRAR</span>';
+                }
+
+                if (lista && qtd > 0) {
+                    lista.innerHTML += `
+                        <tr>
+                            <td><b>${peca}</b></td>
+                            <td>${qtd} un</td>
+                            <td>${status}</td>
+                        </tr>
+                    `;
+                }
+
+                if (selectServico && qtd > 0) {
+                    selectServico.innerHTML += `<option value="${peca}">${peca} (${qtd} em estoque)</option>`;
+                }
+            }
+
+            localStorage.setItem('estoquePeças', JSON.stringify(estoque));
+        }
+
+        function adicionarPecaServico() {
+            const select = document.getElementById('selectPecaServico');
+            const inputQtd = document.getElementById('qtdUsoPeca');
+            
+            const peca = select.value;
+            const qtd = parseInt(inputQtd.value);
+
+            if (!peca) {
+                alert("Selecione uma peça disponível!");
+                return;
+            }
+
+            if (isNaN(qtd) || qtd <= 0) {
+                alert("Informe uma quantidade válida.");
+                return;
+            }
+
+            if (qtd > estoque[peca]) {
+                alert(`Estoque insuficiente! Você tem apenas ${estoque[peca]} unidade(s).`);
+                return;
+            }
+
+            pecasDoServicoAtual.push({ nome: peca, qtd: qtd });
+            inputQtd.value = 1;
+            select.value = '';
+            
+            renderizarPecasServicoTemp();
+        }
+
+        function renderizarPecasServicoTemp() {
+            const tabela = document.getElementById('listaPecasTemp');
+            if (!tabela) return;
+            
+            tabela.innerHTML = '';
+
+            pecasDoServicoAtual.forEach((item, index) => {
+                tabela.innerHTML += `
+                    <tr>
+                        <td>${item.nome}</td>
+                        <td>${item.qtd} un</td>
+                        <td><button class="btn-danger" onclick="removerPecaServicoTemp(${index})">🗑️</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function removerPecaServicoTemp(index) {
+            pecasDoServicoAtual.splice(index, 1);
+            renderizarPecasServicoTemp();
+        }
+
+        function salvarServico() {
+            const prefixo = document.getElementById('prefixo').value.trim().toUpperCase();
+            const data = document.getElementById('dataServico').value;
+
+            if (!prefixo || !data) {
+                alert("Informe o Prefixo e a Data.");
+                return;
+            }
+
+            if (pecasDoServicoAtual.length === 0) {
+                alert("Inclua pelo menos uma peça.");
+                return;
+            }
+
+            let alertasCompra = [];
+
+            pecasDoServicoAtual.forEach(item => {
+                if (estoque[item.nome] !== undefined) {
+                    estoque[item.nome] -= item.qtd;
+                    
+                    if (estoque[item.nome] <= 1) {
+                        alertasCompra.push(`${item.nome} (Restante: ${estoque[item.nome]} un)`);
+                    }
+                }
+            });
+
+            historico.push({
+                id: Date.now(),
+                prefixo: prefixo,
+                data: data,
+                pecas: [...pecasDoServicoAtual]
+            });
+
+            localStorage.setItem('historicoServicos', JSON.stringify(historico));
+
+            if (alertasCompra.length > 0) {
+                alert(`Serviço salvo com sucesso!\n\n⚠️ ALERTA DE COMPRA:\nEstoque crítico para:\n- ${alertasCompra.join('\n- ')}`);
+            } else {
+                alert("Serviço registrado e estoque atualizado!");
+            }
+
+            document.getElementById('prefixo').value = '';
+            pecasDoServicoAtual = [];
+            renderizarPecasServicoTemp();
+            renderizarEstoque();
+            renderizarHistorico();
+        }
+
+        function renderizarHistorico(listaParaExibir = historico) {
+            const tabela = document.getElementById('listaHistorico');
+            if (!tabela) return;
+            
+            tabela.innerHTML = '';
+
+            listaParaExibir.forEach(item => {
+                const pecasTexto = item.pecas.map(p => `${p.nome} (${p.qtd}x)`).join(', ');
+                const dataFormatada = item.data.split('-').reverse().join('/');
+
+                tabela.innerHTML += `
+                    <tr>
+                        <td>${dataFormatada}</td>
+                        <td><b>${item.prefixo}</b></td>
+                        <td>${pecasTexto}</td>
+                        <td><button class="btn-danger" onclick="removerHistorico(${item.id})">🗑️</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function removerHistorico(id) {
+            if (confirm("Apagar registro do histórico?")) {
+                historico = historico.filter(item => item.id !== id);
+                localStorage.setItem('historicoServicos', JSON.stringify(historico));
+                filtrarHistorico();
+            }
+        }
+
+        function filtrarHistorico() {
+            const busca = document.getElementById('busca').value.toLowerCase().trim();
+            const resultado = historico.filter(item => {
+                const dataFormatada = item.data.split('-').reverse().join('/');
+                return item.prefixo.toLowerCase().includes(busca) || dataFormatada.includes(busca);
+            });
+            renderizarHistorico(resultado);
+        }
+
+        function gerarPDF() {
+            const busca = document.getElementById('busca').value.toLowerCase().trim();
+            
+            const dadosParaExportar = historico.filter(item => {
+                const dataFormatada = item.data.split('-').reverse().join('/');
+                return item.prefixo.toLowerCase().includes(busca) || dataFormatada.includes(busca);
+            });
+
+            if (dadosParaExportar.length === 0) {
+                alert("Nenhum registro encontrado para exportar.");
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(16);
+            const titulo = busca ? `RELATÓRIO DE MONTAGENS - BUSCA: "${busca.toUpperCase()}"` : "RELATÓRIO DE MONTAGENS E MANUTENÇÃO";
+            doc.text(titulo, 14, 15);
+
+            const dadosTabela = dadosParaExportar.map(item => [
+                item.data.split('-').reverse().join('/'),
+                item.prefixo,
+                item.pecas.map(p => `${p.nome} (${p.qtd}x)`).join('\n')
+            ]);
+
+            doc.autoTable({
+                startY: 25,
+                head: [['Data', 'Prefixo', 'Peças Utilizadas']],
+                body: dadosTabela,
+                theme: 'grid',
+                headStyles: { fillColor: [52, 73, 94] }
+            });
+
+            doc.save(`relatorio_montagens_${new Date().toISOString().slice(0,10)}.pdf`);
+        }
+    </script>
 </body>
 </html>
