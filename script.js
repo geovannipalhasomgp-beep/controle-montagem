@@ -1,169 +1,224 @@
-let pecasTemporarias = [];
+// DADOS SALVOS NO LAVEGADOR (LOCALSTORAGE)
+let estoque = JSON.parse(localStorage.getItem('estoquePeças')) || {};
+let historico = JSON.parse(localStorage.getItem('historicoServicos')) || [];
+let pecasDoServicoAtual = [];
 
-// Elementos da Interface
-const inputTipo = document.getElementById('tipo');
-const inputPrefixo = document.getElementById('prefixo');
-const inputDataServico = document.getElementById('data-servico');
-const selectPeca = document.getElementById('peca');
-const inputQuantidade = document.getElementById('quantidade');
-const btnAddPeca = document.getElementById('btn-add-peca');
-const listaPecasTemp = document.getElementById('lista-pecas-temp');
-const btnSalvarServico = document.getElementById('btn-salvar-servico');
-const tabelaHistoricoBody = document.querySelector('#tabela-historico tbody');
-const inputBuscaPrefixo = document.getElementById('busca-prefixo');
-const inputBuscaData = document.getElementById('busca-data');
+// DEFINIR DATA ATUAL NO INPUT
+document.getElementById('dataServico').valueAsDate = new Date();
 
-// Preenche a data com hoje por padrão
-document.addEventListener('DOMContentLoaded', () => {
-    const hoje = new Date().toISOString().split('T')[0];
-    inputDataServico.value = hoje;
-    carregarHistorico();
-});
+// 1. GERENCIAMENTO DE ESTOQUE
+function renderizarEstoque() {
+    const lista = document.getElementById('listaEstoque');
+    const selectPeca = document.getElementById('selectPecaEstoque');
+    
+    lista.innerHTML = '';
+    selectPeca.innerHTML = '<option value="">-- Selecione uma Peça --</option>';
 
-// 1. ADICIONAR PEÇA À LISTA TEMPORÁRIA
-btnAddPeca.addEventListener('click', () => {
-    const peca = selectPeca.value;
-    const qtd = parseInt(inputQuantidade.value);
+    for (let peca in estoque) {
+        const qtd = estoque[peca];
+        let status = '<span style="color: #00f3ff;">OK</span>';
+        
+        if (qtd <= 1) {
+            status = '<span style="color: #ff0055; font-weight: bold; text-shadow: 0 0 8px #ff0055;">⚠️ PEDIR COMPRA</span>';
+        }
 
-    if (!peca) {
-        alert('Por favor, selecione uma peça!');
-        return;
-    }
-
-    if (!qtd || qtd <= 0) {
-        alert('Informe uma quantidade válida!');
-        return;
-    }
-
-    pecasTemporarias.push({ peca, quantidade: qtd });
-
-    selectPeca.value = '';
-    inputQuantidade.value = 1;
-
-    atualizarListaTemporaria();
-});
-
-function atualizarListaTemporaria() {
-    listaPecasTemp.innerHTML = '';
-
-    if (pecasTemporarias.length === 0) {
-        listaPecasTemp.innerHTML = '<li style="border-left:none; color: #787f91;">Nenhuma peça adicionada ainda.</li>';
-        return;
-    }
-
-    pecasTemporarias.forEach((item, index) => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-            <span><strong>${item.quantidade}x</strong> ${item.peca}</span>
-            <button type="button" onclick="removerPecaTemp(${index})" style="background:none; border:none; color:#ff4d6d; cursor:pointer; font-weight:bold;">✕</button>
-        `;
-        listaPecasTemp.appendChild(li);
-    });
-}
-
-function removerPecaTemp(index) {
-    pecasTemporarias.splice(index, 1);
-    atualizarListaTemporaria();
-}
-
-// 2. SALVAR SERVIÇO COMPLETO
-btnSalvarServico.addEventListener('click', () => {
-    const tipo = inputTipo.value;
-    const prefixo = inputPrefixo.value.trim();
-    const data = inputDataServico.value;
-
-    if (!prefixo) {
-        alert('Por favor, preencha o Prefixo / Identificação.');
-        return;
-    }
-
-    if (pecasTemporarias.length === 0) {
-        alert('Adicione pelo menos uma peça antes de salvar o serviço!');
-        return;
-    }
-
-    const resumoPecas = pecasTemporarias
-        .map(p => `${p.quantidade}x ${p.peca}`)
-        .join(', ');
-
-    const novoRegistro = {
-        id: Date.now(), // ID único baseado no horário
-        data: data,
-        tipo: tipo,
-        prefixo: prefixo,
-        pecas: resumoPecas
-    };
-
-    const historico = JSON.parse(localStorage.getItem('historicoServicos')) || [];
-    historico.unshift(novoRegistro);
-    localStorage.setItem('historicoServicos', JSON.stringify(historico));
-
-    inputPrefixo.value = '';
-    pecasTemporarias = [];
-    atualizarListaTemporaria();
-
-    carregarHistorico();
-});
-
-// 3. CARREGAR E EXIBIR HISTÓRICO
-function carregarHistorico() {
-    const historico = JSON.parse(localStorage.getItem('historicoServicos')) || [];
-    const filtroPrefixo = inputBuscaPrefixo.value.toLowerCase().trim();
-    const filtroData = inputBuscaData.value;
-
-    tabelaHistoricoBody.innerHTML = '';
-
-    const registrosFiltrados = historico.filter(item => {
-        const bateuPrefixo = item.prefixo.toLowerCase().includes(filtroPrefixo);
-        const bateuData = filtroData ? item.data === filtroData : true;
-        return bateuPrefixo && bateuData;
-    });
-
-    if (registrosFiltrados.length === 0) {
-        tabelaHistoricoBody.innerHTML = `
+        lista.innerHTML += `
             <tr>
-                <td colspan="5" style="text-align: center; color: #787f91; padding: 20px;">
-                    Nenhum registro encontrado.
-                </td>
+                <td><b>${peca}</b></td>
+                <td>${qtd} un</td>
+                <td>${status}</td>
+                <td><button class="btn-deletar" onclick="removerEstoque('${peca}')">🗑️</button></td>
             </tr>
         `;
+
+        selectPeca.innerHTML += `<option value="${peca}">${peca} (Estoque: ${qtd})</option>`;
+    }
+
+    localStorage.setItem('estoquePeças', JSON.stringify(estoque));
+}
+
+function adicionarEstoque() {
+    const nome = document.getElementById('nomePecaEstoque').value.trim().toUpperCase();
+    const qtd = parseInt(document.getElementById('qtdPecaEstoque').value);
+
+    if (!nome || isNaN(qtd)) {
+        alert("Preencha o nome da peça e a quantidade corretamente!");
         return;
     }
 
-    registrosFiltrados.forEach(item => {
-        const [ano, mes, dia] = item.data.split('-');
-        const dataFormatada = `${dia}/${mes}/${ano}`;
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${dataFormatada}</td>
-            <td><strong>${item.tipo}</strong></td>
-            <td style="color: #00bfff; font-weight: 600;">${item.prefixo}</td>
-            <td>${item.pecas}</td>
-            <td style="text-align: center;" class="coluna-acao">
-                <button type="button" onclick="excluirRegistro(${item.id})" class="btn-deletar" title="Excluir Registro">
-                    🗑️
-                </button>
-            </td>
-        `;
-        tabelaHistoricoBody.appendChild(tr);
-    });
+    estoque[nome] = (estoque[nome] || 0) + qtd;
+    document.getElementById('nomePecaEstoque').value = '';
+    document.getElementById('qtdPecaEstoque').value = '';
+    
+    renderizarEstoque();
 }
 
-// 4. FUNÇÃO PARA EXCLUIR REGISTRO ERRADO
-function excluirRegistro(id) {
-    if (confirm('Tem certeza que deseja excluir este registro do histórico?')) {
-        let historico = JSON.parse(localStorage.getItem('historicoServicos')) || [];
-        // Filtra mantendo apenas os itens com ID diferente do selecionado
-        historico = historico.filter(item => item.id !== id);
-        localStorage.setItem('historicoServicos', JSON.stringify(historico));
-        carregarHistorico(); // Atualiza a tabela na tela
+function removerEstoque(peca) {
+    if (confirm(`Deseja remover a peça "${peca}" do estoque?`)) {
+        delete estoque[peca];
+        renderizarEstoque();
     }
 }
 
-inputBuscaPrefixo.addEventListener('input', carregarHistorico);
-inputBuscaData.addEventListener('change', carregarHistorico);
+// 2. REGISTRO DE SERVIÇOS
+function adicionarPecaServico() {
+    const peca = document.getElementById('selectPecaEstoque').value;
+    const qtd = parseInt(document.getElementById('qtdUsoPeca').value);
 
-document.getElementById('btn-pdf').addEventListener('click', () => {
-    window.print();
+    if (!peca || isNaN(qtd) || qtd <= 0) {
+        alert("Selecione uma peça válida e informe uma quantidade maior que zero.");
+        return;
+    }
+
+    if (qtd > estoque[peca]) {
+        alert(`Quantidade indisponível no estoque! Estoque atual de ${peca}: ${estoque[peca]}`);
+        return;
+    }
+
+    pecasDoServicoAtual.push({ nome: peca, qtd: qtd });
+    document.getElementById('qtdUsoPeca').value = 1;
+    renderizarPecasServicoTemp();
+}
+
+function renderizarPecasServicoTemp() {
+    const tabela = document.getElementById('listaPecasTemp');
+    tabela.innerHTML = '';
+
+    pecasDoServicoAtual.forEach((item, index) => {
+        tabela.innerHTML += `
+            <tr>
+                <td>${item.nome}</td>
+                <td>${item.qtd} un</td>
+                <td><button class="btn-deletar" onclick="removerPecaServicoTemp(${index})">🗑️</button></td>
+            </tr>
+        `;
+    });
+}
+
+function removerPecaServicoTemp(index) {
+    pecasDoServicoAtual.splice(index, 1);
+    renderizarPecasServicoTemp();
+}
+
+function salvarServico() {
+    const prefixo = document.getElementById('prefixo').value.trim().toUpperCase();
+    const data = document.getElementById('dataServico').value;
+
+    if (!prefixo || !data) {
+        alert("Informe o Prefixo do equipamento e a Data do Serviço.");
+        return;
+    }
+
+    if (pecasDoServicoAtual.length === 0) {
+        alert("Adicione pelo menos uma peça ao serviço!");
+        return;
+    }
+
+    // DAR BAIXA NO ESTOQUE E VERIFICAR ALERTA
+    let alertasCompra = [];
+    pecasDoServicoAtual.forEach(item => {
+        if (estoque[item.nome] !== undefined) {
+            estoque[item.nome] -= item.qtd;
+            if (estoque[item.nome] <= 1) {
+                alertasCompra.push(`${item.nome} (Sobra: ${estoque[item.nome]} un)`);
+            }
+        }
+    });
+
+    // REGISTRAR HISTÓRICO
+    historico.push({
+        id: Date.now(),
+        prefixo: prefixo,
+        data: data,
+        pecas: [...pecasDoServicoAtual]
+    });
+
+    localStorage.setItem('historicoServicos', JSON.stringify(historico));
+
+    // ALERTAS
+    if (alertasCompra.length > 0) {
+        alert(`⚠️ ATENÇÃO: ESTOQUE BAIXO!\n\nAs seguintes peças precisam de reposição urgente:\n- ${alertasCompra.join('\n- ')}`);
+    } else {
+        alert("Serviço e baixa de estoque registrados com sucesso!");
+    }
+
+    // LIMPAR CAMPOS
+    document.getElementById('prefixo').value = '';
+    pecasDoServicoAtual = [];
+    renderizarPecasServicoTemp();
+    renderizarEstoque();
+    renderizarHistorico();
+}
+
+// 3. HISTÓRICO E BUSCA
+function renderizarHistorico(listaParaExibir = historico) {
+    const tabela = document.getElementById('listaHistorico');
+    tabela.innerHTML = '';
+
+    listaParaExibir.forEach(item => {
+        const pecasTexto = item.pecas.map(p => `${p.nome} (${p.qtd}x)`).join(', ');
+        const dataFormatada = item.data.split('-').reverse().join('/');
+
+        tabela.innerHTML += `
+            <tr>
+                <td>${dataFormatada}</td>
+                <td><b>${item.prefixo}</b></td>
+                <td>${pecasTexto}</td>
+                <td><button class="btn-deletar" onclick="removerHistorico(${item.id})">🗑️</button></td>
+            </tr>
+        `;
+    });
+}
+
+function removerHistorico(id) {
+    if (confirm("Deseja remover este histórico de registro?")) {
+        historico = historico.filter(item => item.id !== id);
+        localStorage.setItem('historicoServicos', JSON.stringify(historico));
+        renderizarHistorico();
+    }
+}
+
+function filtrarHistorico() {
+    const busca = document.getElementById('busca').value.toLowerCase();
+    const resultado = historico.filter(item => {
+        const dataFormatada = item.data.split('-').reverse().join('/');
+        return item.prefixo.toLowerCase().includes(busca) || dataFormatada.includes(busca);
+    });
+    renderizarHistorico(resultado);
+}
+
+// 4. GERADOR DE PDF
+function gerarPDF() {
+    if (historico.length === 0) {
+        alert("Nenhum histórico disponível para gerar PDF.");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.setFontSize(16);
+    doc.text("RELATÓRIO DE MONTAGENS E MANUTENÇÃO", 14, 15);
+
+    const dadosTabela = historico.map(item => [
+        item.data.split('-').reverse().join('/'),
+        item.prefixo,
+        item.pecas.map(p => `${p.nome} (${p.qtd}x)`).join('\n')
+    ]);
+
+    doc.autoTable({
+        startY: 25,
+        head: [['Data', 'Prefixo', 'Peças Utilizadas']],
+        body: dadosTabela,
+        theme: 'grid',
+        headStyles: { fillColor: [8, 10, 16] }
+    });
+
+    doc.save(`relatorio_montagens_${new Date().toISOString().slice(0,10)}.pdf`);
+}
+
+// INICIALIZAR PÁGINA
+document.addEventListener('DOMContentLoaded', () => {
+    renderizarEstoque();
+    renderizarHistorico();
 });
