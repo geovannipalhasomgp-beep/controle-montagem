@@ -3,355 +3,377 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle de Montagem & Estoque</title>
+    <title>Sistema de Montagem & Estoque</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
         }
 
         :root {
-            /* Fundo Totalmente Escuro e Sólido */
-            --bg-main: #0a0a0c;
-            --card-bg: rgba(18, 18, 22, 0.95);
-            --card-border: rgba(0, 242, 254, 0.2);
-            --text-primary: #f3f4f6;
-            --text-secondary: #9ca3af;
+            --bg-body: #0a0c10;
+            --card-bg: #12161f;
+            --card-border: rgba(255, 255, 255, 0.07);
             
-            /* Cores Neon e Destaque Azul */
-            --neon-blue: #00f2fe;
-            --neon-blue-glow: rgba(0, 242, 254, 0.4);
-            --accent-blue: #3b82f6;
+            --input-bg: #0b0e14;
+            --input-border: #1e2638;
             
-            --success-green: #10b981;
-            --success-glow: rgba(16, 185, 129, 0.4);
+            --blue-bright: #0099ff;
+            --blue-cyan: #00d2ff;
+            --blue-glow: rgba(0, 153, 255, 0.35);
             
-            --danger-red: #ef4444;
-            --danger-glow: rgba(239, 68, 68, 0.4);
+            --pink-accent: #ff2e63;
+            --pink-glow: rgba(255, 46, 99, 0.4);
+
+            --text-main: #f1f5f9;
+            --text-muted: #64748b;
+            --text-label: #8e9baa;
         }
 
         body {
-            background-color: var(--bg-main);
-            color: var(--text-primary);
+            background-color: var(--bg-body);
+            color: var(--text-main);
             min-height: 100vh;
-            padding: 25px 15px;
+            padding: 24px 16px;
+            display: flex;
+            justify-content: center;
         }
 
         .container {
-            max-width: 850px;
-            margin: 0 auto;
-        }
-
-        /* Header e Logotipo */
-        header {
-            margin-bottom: 35px;
-            padding: 10px 0;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .logo-icon {
-            width: 52px;
-            height: 52px;
-            padding: 10px;
-            background: rgba(0, 242, 254, 0.05);
-            border: 1px solid rgba(0, 242, 254, 0.3);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 20px rgba(0, 242, 254, 0.2), inset 0 0 10px rgba(0, 242, 254, 0.1);
-            backdrop-filter: blur(8px);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .logo-icon:hover {
-            transform: scale(1.05) rotate(5deg);
-            box-shadow: 0 0 30px rgba(0, 242, 254, 0.4), inset 0 0 15px rgba(0, 242, 254, 0.2);
-        }
-
-        .logo-icon svg {
             width: 100%;
-            height: 100%;
-            filter: drop-shadow(0 0 6px rgba(0, 242, 254, 0.6));
-        }
-
-        .logo-text {
-            text-align: left;
-        }
-
-        .logo-text h1 {
-            font-size: 26px;
-            font-weight: 700;
-            color: #ffffff;
-            letter-spacing: -0.5px;
-            line-height: 1.2;
-            margin: 0;
-        }
-
-        .logo-text h1 span {
-            color: var(--neon-blue);
-            text-shadow: 0 0 12px var(--neon-blue-glow);
-        }
-
-        .logo-text p {
-            color: #6b7280;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            margin-top: 4px;
-        }
-
-        /* Layout em Coluna Única (Um embaixo do outro) */
-        .grid-vertical {
+            max-width: 900px;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 20px;
         }
 
-        /* Cards Escuros */
+        /* HEADER */
+        .top-header {
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 210, 255, 0.25);
+            border-radius: 14px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .header-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(0, 153, 255, 0.1);
+            border: 1px solid rgba(0, 210, 255, 0.4);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+        }
+
+        .header-icon svg {
+            width: 22px;
+            height: 22px;
+            fill: var(--blue-cyan);
+            filter: drop-shadow(0 0 4px var(--blue-cyan));
+        }
+
+        .header-titles h1 {
+            font-size: 19px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.2px;
+            text-transform: uppercase;
+        }
+
+        .header-titles h1 span {
+            color: var(--blue-cyan);
+        }
+
+        .header-titles p {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            margin-top: 2px;
+            text-transform: uppercase;
+        }
+
+        .status-badge {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #00d2ff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00d2ff;
+            animation: pulseDot 2s infinite;
+        }
+
+        /* CARDS */
         .card {
             background: var(--card-bg);
-            backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
             border-radius: 14px;
             padding: 24px;
-            border: 1px solid var(--card-border);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            animation: fadeIn 0.6s ease;
         }
 
-        .card:hover {
-            border-color: rgba(0, 242, 254, 0.4);
-            box-shadow: 0 10px 30px 0 rgba(0, 242, 254, 0.1);
-        }
-
-        .card-header {
+        .card-header-flex {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
 
-        .card h2 {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--neon-blue);
+        .card-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--blue-cyan);
             margin-bottom: 18px;
             display: flex;
             align-items: center;
             gap: 8px;
-            text-shadow: 0 0 10px var(--neon-blue-glow);
         }
 
-        .card h3 {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin: 20px 0 10px 0;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
+        /* FORMULÁRIOS & INPUTS */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
         }
 
-        /* Formulários */
         .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
             margin-bottom: 14px;
         }
 
-        .form-row {
-            display: flex;
-            gap: 12px;
-        }
-
         label {
-            display: block;
             font-size: 11px;
-            font-weight: 600;
-            color: var(--neon-blue);
-            margin-bottom: 6px;
+            font-weight: 700;
+            color: var(--text-label);
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-            text-shadow: 0 0 5px rgba(0, 242, 254, 0.3);
+            letter-spacing: 0.6px;
         }
 
         input, select {
             width: 100%;
-            padding: 11px 14px;
-            background: #121216;
-            border: 1px solid rgba(0, 242, 254, 0.25);
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
             border-radius: 8px;
-            font-size: 14px;
-            color: #ffffff;
+            padding: 12px 14px;
+            color: #f8fafc;
+            font-size: 13.5px;
             outline: none;
             transition: all 0.25s ease;
         }
 
-        input::placeholder {
-            color: #52525b;
-        }
-
         input:focus, select:focus {
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 14px var(--neon-blue-glow);
-            background: #18181c;
+            border-color: var(--blue-bright);
+            box-shadow: 0 0 12px var(--blue-glow);
+            background: #0d121c;
         }
 
-        select option {
-            background-color: #121216;
-            color: #ffffff;
+        input::placeholder {
+            color: #334155;
         }
 
-        /* Botões */
+        /* BOTÕES */
         .btn {
-            padding: 11px 18px;
             border: none;
             border-radius: 8px;
-            font-weight: 600;
-            font-size: 13px;
+            padding: 12px 20px;
+            font-weight: 700;
+            font-size: 13.5px;
             cursor: pointer;
-            transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            letter-spacing: 0.3px;
+            gap: 8px;
+            transition: all 0.25s ease;
         }
 
         .btn:active {
-            transform: scale(0.97) !important;
+            transform: scale(0.98);
         }
 
-        .btn-add {
-            background: rgba(0, 242, 254, 0.08);
-            color: var(--neon-blue);
-            border: 1px solid var(--neon-blue);
-            width: 100%;
-            margin-bottom: 16px;
-            box-shadow: 0 0 10px rgba(0, 242, 254, 0.1);
-        }
-
-        .btn-add:hover {
-            background: var(--neon-blue);
-            color: #050507;
-            font-weight: 700;
-            box-shadow: 0 0 20px var(--neon-blue-glow), 0 0 30px rgba(0, 242, 254, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #10b981, #059669);
+        .btn-blue {
+            background: var(--blue-bright);
             color: #ffffff;
+            box-shadow: 0 4px 15px var(--blue-glow);
             width: 100%;
-            margin-top: 10px;
-            box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
         }
 
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #34d399, #10b981);
-            box-shadow: 0 0 22px var(--success-glow);
-            transform: translateY(-2px);
+        .btn-blue:hover {
+            background: #1ac9ff;
+            box-shadow: 0 6px 20px rgba(0, 210, 255, 0.5);
+            transform: translateY(-1px);
         }
 
-        .btn-secondary {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        .btn-inline {
+            background: var(--blue-bright);
             color: #ffffff;
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+            height: 43px;
+            box-shadow: 0 4px 12px var(--blue-glow);
+            white-space: nowrap;
         }
 
-        .btn-secondary:hover {
-            background: linear-gradient(135deg, #60a5fa, #3b82f6);
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-            transform: translateY(-2px);
+        .btn-inline:hover {
+            background: #1ac9ff;
+            transform: translateY(-1px);
         }
 
-        .btn-danger {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
-            padding: 5px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-danger:hover {
-            background: var(--danger-red);
+        .btn-pink {
+            background: var(--pink-accent);
             color: #ffffff;
-            box-shadow: 0 0 12px var(--danger-glow);
-            transform: scale(1.08);
-        }
-
-        /* Tabelas */
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-top: 10px;
-        }
-
-        th, td {
-            padding: 11px 12px;
-            text-align: left;
+            box-shadow: 0 4px 15px var(--pink-glow);
+            border-radius: 8px;
+            padding: 10px 18px;
             font-size: 13px;
         }
 
-        th {
-            background-color: #121216;
-            color: var(--neon-blue);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 11px;
-            letter-spacing: 0.8px;
-            border-bottom: 2px solid rgba(0, 242, 254, 0.3);
-            text-shadow: 0 0 5px rgba(0, 242, 254, 0.3);
+        .btn-pink:hover {
+            background: #ff4d79;
+            box-shadow: 0 6px 20px var(--pink-glow);
+            transform: translateY(-1px);
         }
 
-        th:first-child { border-top-left-radius: 6px; }
-        th:last-child { border-top-right-radius: 6px; }
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .btn-danger:hover {
+            background: #ef4444;
+            color: #ffffff;
+        }
+
+        /* PEÇAS INCLUÍDAS - CONTAINER STYLED */
+        .pecas-box {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            padding: 12px;
+            min-height: 48px;
+            margin-bottom: 16px;
+        }
+
+        .pecas-box-title {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        /* TABELAS */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 6px;
+        }
+
+        th {
+            text-align: left;
+            padding: 10px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-label);
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--input-border);
+        }
 
         td {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            color: #e5e7eb;
+            padding: 12px;
+            font-size: 13px;
+            color: #cbd5e1;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         tbody tr:hover {
-            background-color: rgba(0, 242, 254, 0.05);
-        }
-
-        .tabela-compacta th, .tabela-compacta td {
-            padding: 8px 10px;
-            font-size: 12px;
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .badge-ok {
-            color: #34d399;
-            font-weight: 600;
-            text-shadow: 0 0 8px rgba(52, 211, 153, 0.4);
+            color: #10b981;
+            font-weight: 700;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
         }
 
-        .badge-alerta {
-            color: #fbbf24;
-            font-weight: 600;
-            text-shadow: 0 0 8px rgba(251, 191, 36, 0.4);
+        .badge-alert {
+            color: #f59e0b;
+            font-weight: 700;
+            background: rgba(245, 158, 11, 0.1);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
         }
 
-        @media (max-width: 600px) {
-            .logo-container {
+        /* ANIMAÇÕES */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseDot {
+            0% { box-shadow: 0 0 0 0 rgba(0, 210, 255, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(0, 210, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 210, 255, 0); }
+        }
+
+        @media (max-width: 640px) {
+            .top-header {
                 flex-direction: column;
-                text-align: center;
+                align-items: flex-start;
+                gap: 12px;
             }
-            .logo-text {
-                text-align: center;
+            .card-header-flex {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .btn-pink {
+                width: 100%;
             }
         }
     </style>
@@ -359,123 +381,145 @@
 <body>
 
     <div class="container">
-        <!-- LOGOTIPO EM SVG -->
-        <header>
-            <div class="logo-container">
-                <div class="logo-icon">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="url(#blue-gradient)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M19.4 15A1.65 1.65 0 0 0 20 12A1.65 1.65 0 0 0 19.4 9L21 7.4L19.6 6L18 7.6A1.65 1.65 0 0 0 15 7A1.65 1.65 0 0 0 12 4.6L12 2.5L10 2.5L10 4.6A1.65 1.65 0 0 0 7 7A1.65 1.65 0 0 0 4.6 9L3 7.4L1.6 8.8L3.2 10.4A1.65 1.65 0 0 0 3 12A1.65 1.65 0 0 0 3.6 15L2 16.6L3.4 18L5 16.4A1.65 1.65 0 0 0 8 17A1.65 1.65 0 0 0 11 19.4L11 21.5L13 21.5L13 19.4A1.65 1.65 0 0 0 16 17A1.65 1.65 0 0 0 18.4 15L20 16.6L21.4 15.2L19.4 15Z" stroke="url(#blue-gradient)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M13 8L9 13H12L11 16L15 11H12L13 8Z" fill="#00f2fe"/>
-                        <defs>
-                            <linearGradient id="blue-gradient" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#00f2fe"/>
-                                <stop offset="1" stop-color="#3b82f6"/>
-                            </linearGradient>
-                        </defs>
+
+        <!-- CABEÇALHO SASHBOARD -->
+        <div class="top-header">
+            <div class="header-brand">
+                <div class="header-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
                     </svg>
                 </div>
-                <div class="logo-text">
-                    <h1>Controle de Montagem <span>& Estoque</span></h1>
-                    <p>SISTEMA DE GESTÃO DE PEÇAS E SERVIÇOS</p>
+                <div class="header-titles">
+                    <h1>SISTEMA DE MONTAGEM <span>& ESTOQUE</span></h1>
+                    <p>CONTROLE DE MOTORES DE ARRANQUE & ALTERNADORES</p>
                 </div>
             </div>
-        </header>
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                Oficina Online
+            </div>
+        </div>
 
-        <div class="grid-vertical">
-            <!-- 1. ENTRADA DE ESTOQUE (TOPO) -->
-            <div class="card">
-                <h2>📦 Entrada de Estoque</h2>
-                
-                <div class="form-group">
-                    <label>Selecione a Peça (Arranque / Alternador)</label>
+        <!-- 1. ENTRADA DE ESTOQUE (TOPO) -->
+        <div class="card">
+            <h2 class="card-title">📦 Entrada de Estoque de Peças</h2>
+            
+            <div class="form-grid">
+                <div class="form-group" style="grid-column: span 2;">
+                    <label>Selecione a Peça:</label>
                     <select id="selectPecaCadastro"></select>
                 </div>
-
                 <div class="form-group">
-                    <label>Quantidade a Adicionar</label>
-                    <input type="number" id="qtdPecaEstoque" placeholder="Ex: 5" min="1" value="1">
+                    <label>Qtd Aumento:</label>
+                    <input type="number" id="qtdPecaEstoque" placeholder="1" min="1" value="1">
                 </div>
+            </div>
 
-                <button class="btn btn-add" onclick="adicionarEstoque()">+ Adicionar ao Estoque</button>
+            <button class="btn btn-blue" style="margin-bottom: 20px;" onclick="adicionarEstoque()">+ Adicionar ao Estoque Geral</button>
 
-                <h3>Saldo Atual do Estoque</h3>
-                <table class="tabela-compacta">
+            <label>Saldo Atual do Estoque:</label>
+            <div class="table-responsive">
+                <table>
                     <thead>
                         <tr>
-                            <th>Peça</th>
-                            <th>Qtd</th>
-                            <th>Status</th>
+                            <th>PEÇA</th>
+                            <th>QTD ATUAL</th>
+                            <th>STATUS</th>
                         </tr>
                     </thead>
                     <tbody id="listaEstoque"></tbody>
                 </table>
             </div>
+        </div>
 
-            <!-- 2. LANÇAR MONTAGEM (MEIO) -->
-            <div class="card">
-                <h2>📝 Lançar Montagem</h2>
+        <!-- 2. NOVO REGISTRO DE SERVIÇO (MEIO) -->
+        <div class="card">
+            <h2 class="card-title">Novo Registro de Serviço</h2>
+
+            <div class="form-grid">
                 <div class="form-group">
-                    <label>Prefixo / Equipamento</label>
-                    <input type="text" id="prefixo" placeholder="Ex: ARR-102">
+                    <label>TIPO DE EQUIPAMENTO:</label>
+                    <select id="tipoEquipamento">
+                        <option value="Motor de Arranque">Motor de Arranque</option>
+                        <option value="Alternador">Alternador</option>
+                        <option value="Outros">Outros</option>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label>Data</label>
-                    <input type="date" id="dataServico">
+                    <label>PREFIXO / IDENTIFICAÇÃO:</label>
+                    <input type="text" id="prefixo" placeholder="Ex: M-102 ou Placa/Frota">
                 </div>
-
-                <div class="form-row">
-                    <div class="form-group" style="flex: 2;">
-                        <label>Peça Utilizada</label>
-                        <select id="selectPecaServico">
-                            <option value="">-- Selecione uma Peça --</option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label>Qtd Usada</label>
-                        <input type="number" id="qtdUsoPeca" value="1" min="1">
-                    </div>
-                </div>
-                <button class="btn btn-add" onclick="adicionarPecaServico()">+ Incluir Peça no Serviço</button>
-
-                <table class="tabela-compacta">
-                    <thead>
-                        <tr>
-                            <th>Peça Selecionada</th>
-                            <th>Qtd</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody id="listaPecasTemp"></tbody>
-                </table>
-
-                <button class="btn btn-primary" onclick="salvarServico()">💾 Salvar e Dar Baixa</button>
             </div>
 
-            <!-- 3. HISTÓRICO DE SERVIÇOS (EMBAIXO) -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>📋 Histórico de Serviços</h2>
-                    <button class="btn btn-secondary" onclick="gerarPDF()">📄 Exportar PDF</button>
-                </div>
-                
-                <div class="form-group">
-                    <input type="text" id="busca" placeholder="🔍 Buscar por Prefixo ou Data..." onkeyup="filtrarHistorico()">
-                </div>
+            <div class="form-group">
+                <label>DATA DO SERVIÇO:</label>
+                <input type="date" id="dataServico">
+            </div>
 
+            <label style="margin-top: 10px;">Peças Utilizadas Neste Serviço</label>
+            <div style="display: flex; gap: 10px; align-items: flex-end; margin-top: 6px; margin-bottom: 12px; flex-wrap: wrap;">
+                <div class="form-group" style="flex: 1; min-width: 200px; margin-bottom: 0;">
+                    <label>SELECIONE A PEÇA:</label>
+                    <select id="selectPecaServico">
+                        <option value="">-- Selecione a Peça --</option>
+                    </select>
+                </div>
+                <div class="form-group" style="width: 80px; margin-bottom: 0;">
+                    <label>QTD:</label>
+                    <input type="number" id="qtdUsoPeca" value="1" min="1">
+                </div>
+                <button class="btn btn-inline" onclick="adicionarPecaServico()">+ Adicionar Peça</button>
+            </div>
+
+            <!-- Peças Incluídas -->
+            <div class="pecas-box">
+                <div class="pecas-box-title">Peças Incluídas no Prefixo Atual:</div>
+                <div class="table-responsive">
+                    <table>
+                        <tbody id="listaPecasTemp">
+                            <tr><td colspan="3" style="color: #475569; font-style: italic;">Nenhuma peça selecionada ainda.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <button class="btn btn-blue" onclick="salvarServico()">Salvar Serviço Completo</button>
+        </div>
+
+        <!-- 3. HISTÓRICO DE MOVIMENTAÇÕES (BASE) -->
+        <div class="card">
+            <div class="card-header-flex">
+                <h2 class="card-title" style="margin-bottom: 0;">Histórico de Movimentações</h2>
+                <button class="btn btn-pink" onclick="gerarPDF()">Gerar Relatório em PDF</button>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>BUSCAR POR PREFIXO:</label>
+                    <input type="text" id="buscaPrefixo" placeholder="Digite o prefixo..." onkeyup="filtrarHistorico()">
+                </div>
+                <div class="form-group">
+                    <label>FILTRAR POR DATA:</label>
+                    <input type="date" id="buscaData" onchange="filtrarHistorico()">
+                </div>
+            </div>
+
+            <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
-                            <th>Data</th>
-                            <th>Prefixo</th>
-                            <th>Peças Utilizadas</th>
-                            <th>Ações</th>
+                            <th>DATA</th>
+                            <th>EQUIPAMENTO / PREFIXO</th>
+                            <th>PEÇAS UTILIZADAS</th>
+                            <th>AÇÕES</th>
                         </tr>
                     </thead>
                     <tbody id="listaHistorico"></tbody>
                 </table>
             </div>
         </div>
+
     </div>
 
     <script>
@@ -552,17 +596,22 @@
             const selectServico = document.getElementById('selectPecaServico');
             
             if (lista) lista.innerHTML = '';
-            if (selectServico) selectServico.innerHTML = '<option value="">-- Selecione uma Peça --</option>';
+            if (selectServico) selectServico.innerHTML = '<option value="">-- Selecione a Peça --</option>';
+
+            let possuiItens = false;
 
             for (let peca in estoque) {
                 const qtd = estoque[peca];
+                if (qtd <= 0) continue;
+
+                possuiItens = true;
                 let status = '<span class="badge-ok">OK</span>';
                 
                 if (qtd <= 1) {
-                    status = '<span class="badge-alerta">⚠️ COMPRAR</span>';
+                    status = '<span class="badge-alert">⚠️ COMPRAR</span>';
                 }
 
-                if (lista && qtd > 0) {
+                if (lista) {
                     lista.innerHTML += `
                         <tr>
                             <td><b>${peca}</b></td>
@@ -572,9 +621,13 @@
                     `;
                 }
 
-                if (selectServico && qtd > 0) {
+                if (selectServico) {
                     selectServico.innerHTML += `<option value="${peca}">${peca} (${qtd} em estoque)</option>`;
                 }
+            }
+
+            if (!possuiItens && lista) {
+                lista.innerHTML = '<tr><td colspan="3" style="color: #475569; font-style: italic;">Nenhum item cadastrado no estoque ainda.</td></tr>';
             }
 
             localStorage.setItem('estoquePeças', JSON.stringify(estoque));
@@ -598,7 +651,7 @@
             }
 
             if (qtd > estoque[peca]) {
-                alert(`Estoque insuficiente! Você tem apenas ${estoque[peca]} unidade(s).`);
+                alert(`Estoque insuficiente! Você possui apenas ${estoque[peca]} unidade(s).`);
                 return;
             }
 
@@ -615,12 +668,17 @@
             
             tabela.innerHTML = '';
 
+            if (pecasDoServicoAtual.length === 0) {
+                tabela.innerHTML = '<tr><td colspan="3" style="color: #475569; font-style: italic;">Nenhuma peça selecionada ainda.</td></tr>';
+                return;
+            }
+
             pecasDoServicoAtual.forEach((item, index) => {
                 tabela.innerHTML += `
                     <tr>
-                        <td>${item.nome}</td>
+                        <td><b>${item.nome}</b></td>
                         <td>${item.qtd} un</td>
-                        <td><button class="btn-danger" onclick="removerPecaServicoTemp(${index})">🗑️</button></td>
+                        <td style="text-align: right;"><button class="btn-danger" onclick="removerPecaServicoTemp(${index})">🗑️ Excluir</button></td>
                     </tr>
                 `;
             });
@@ -632,16 +690,17 @@
         }
 
         function salvarServico() {
+            const tipoEquipamento = document.getElementById('tipoEquipamento').value;
             const prefixo = document.getElementById('prefixo').value.trim().toUpperCase();
             const data = document.getElementById('dataServico').value;
 
             if (!prefixo || !data) {
-                alert("Informe o Prefixo e a Data.");
+                alert("Informe o Prefixo e a Data do serviço.");
                 return;
             }
 
             if (pecasDoServicoAtual.length === 0) {
-                alert("Inclua pelo menos uma peça.");
+                alert("Inclua pelo menos uma peça antes de salvar.");
                 return;
             }
 
@@ -652,13 +711,14 @@
                     estoque[item.nome] -= item.qtd;
                     
                     if (estoque[item.nome] <= 1) {
-                        alertasCompra.push(`${item.nome} (Restante: ${estoque[item.nome]} un)`);
+                        alertasCompra.push(`${item.nome} (Sobra: ${estoque[item.nome]} un)`);
                     }
                 }
             });
 
             historico.push({
                 id: Date.now(),
+                tipo: tipoEquipamento,
                 prefixo: prefixo,
                 data: data,
                 pecas: [...pecasDoServicoAtual]
@@ -667,9 +727,9 @@
             localStorage.setItem('historicoServicos', JSON.stringify(historico));
 
             if (alertasCompra.length > 0) {
-                alert(`Serviço salvo com sucesso!\n\n⚠️ ALERTA DE COMPRA:\nEstoque crítico para:\n- ${alertasCompra.join('\n- ')}`);
+                alert(`Serviço salvo com sucesso!\n\n⚠️ ESTOQUE CRÍTICO:\nComprar reposição para:\n- ${alertasCompra.join('\n- ')}`);
             } else {
-                alert("Serviço registrado e estoque atualizado!");
+                alert("Serviço registrado e estoque atualizado com sucesso!");
             }
 
             document.getElementById('prefixo').value = '';
@@ -685,14 +745,19 @@
             
             tabela.innerHTML = '';
 
-            listaParaExibir.forEach(item => {
+            if (listaParaExibir.length === 0) {
+                tabela.innerHTML = '<tr><td colspan="4" style="color: #475569; font-style: italic;">Nenhum registro de serviço encontrado.</td></tr>';
+                return;
+            }
+
+            listaParaExibir.slice().reverse().forEach(item => {
                 const pecasTexto = item.pecas.map(p => `${p.nome} (${p.qtd}x)`).join(', ');
                 const dataFormatada = item.data.split('-').reverse().join('/');
 
                 tabela.innerHTML += `
                     <tr>
                         <td>${dataFormatada}</td>
-                        <td><b>${item.prefixo}</b></td>
+                        <td><b>${item.prefixo}</b> <span style="font-size: 11px; color: var(--text-muted);">(${item.tipo || 'Geral'})</span></td>
                         <td>${pecasTexto}</td>
                         <td><button class="btn-danger" onclick="removerHistorico(${item.id})">🗑️</button></td>
                     </tr>
@@ -701,7 +766,7 @@
         }
 
         function removerHistorico(id) {
-            if (confirm("Apagar registro do histórico?")) {
+            if (confirm("Deseja realmente apagar este registro do histórico?")) {
                 historico = historico.filter(item => item.id !== id);
                 localStorage.setItem('historicoServicos', JSON.stringify(historico));
                 filtrarHistorico();
@@ -709,20 +774,26 @@
         }
 
         function filtrarHistorico() {
-            const busca = document.getElementById('busca').value.toLowerCase().trim();
+            const buscaPrefixo = document.getElementById('buscaPrefixo').value.toLowerCase().trim();
+            const buscaData = document.getElementById('buscaData').value;
+
             const resultado = historico.filter(item => {
-                const dataFormatada = item.data.split('-').reverse().join('/');
-                return item.prefixo.toLowerCase().includes(busca) || dataFormatada.includes(busca);
+                const bateuPrefixo = item.prefixo.toLowerCase().includes(buscaPrefixo);
+                const bateuData = !buscaData || item.data === buscaData;
+                return bateuPrefixo && bateuData;
             });
+
             renderizarHistorico(resultado);
         }
 
         function gerarPDF() {
-            const busca = document.getElementById('busca').value.toLowerCase().trim();
-            
+            const buscaPrefixo = document.getElementById('buscaPrefixo').value.toLowerCase().trim();
+            const buscaData = document.getElementById('buscaData').value;
+
             const dadosParaExportar = historico.filter(item => {
-                const dataFormatada = item.data.split('-').reverse().join('/');
-                return item.prefixo.toLowerCase().includes(busca) || dataFormatada.includes(busca);
+                const bateuPrefixo = item.prefixo.toLowerCase().includes(buscaPrefixo);
+                const bateuData = !buscaData || item.data === buscaData;
+                return bateuPrefixo && bateuData;
             });
 
             if (dadosParaExportar.length === 0) {
@@ -734,24 +805,23 @@
             const doc = new jsPDF();
 
             doc.setFontSize(16);
-            const titulo = busca ? `RELATÓRIO DE MONTAGENS - BUSCA: "${busca.toUpperCase()}"` : "RELATÓRIO DE MONTAGENS E MANUTENÇÃO";
-            doc.text(titulo, 14, 15);
+            doc.text("RELATÓRIO DE MONTAGENS E MANUTENÇÃO", 14, 15);
 
             const dadosTabela = dadosParaExportar.map(item => [
                 item.data.split('-').reverse().join('/'),
-                item.prefixo,
+                `${item.prefixo} (${item.tipo || 'Geral'})`,
                 item.pecas.map(p => `${p.nome} (${p.qtd}x)`).join('\n')
             ]);
 
             doc.autoTable({
                 startY: 25,
-                head: [['Data', 'Prefixo', 'Peças Utilizadas']],
+                head: [['Data', 'Prefixo / Tipo', 'Peças Utilizadas']],
                 body: dadosTabela,
                 theme: 'grid',
-                headStyles: { fillColor: [18, 18, 22] }
+                headStyles: { fillColor: [18, 22, 31] }
             });
 
-            doc.save(`relatorio_montagens_${new Date().toISOString().slice(0,10)}.pdf`);
+            doc.save(`relatorio_servicos_${new Date().toISOString().slice(0,10)}.pdf`);
         }
     </script>
 </body>
