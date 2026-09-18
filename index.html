@@ -17,7 +17,7 @@
         }
 
         :root {
-            /* Fundo Totalmente Escuro / Preto Profundo */
+            /* Fundo Totalmente Escuro e Sólido */
             --bg-main: #0a0a0c;
             --card-bg: rgba(18, 18, 22, 0.95);
             --card-border: rgba(0, 242, 254, 0.2);
@@ -28,7 +28,6 @@
             --neon-blue: #00f2fe;
             --neon-blue-glow: rgba(0, 242, 254, 0.4);
             --accent-blue: #3b82f6;
-            --accent-blue-hover: #2563eb;
             
             --success-green: #10b981;
             --success-glow: rgba(16, 185, 129, 0.4);
@@ -39,70 +38,103 @@
 
         body {
             background-color: var(--bg-main);
-            background-image: 
-                radial-gradient(circle at 50% 0%, rgba(0, 242, 254, 0.05) 0%, transparent 50%),
-                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-            background-size: 100% 100%, 30px 30px, 30px 30px;
             color: var(--text-primary);
             min-height: 100vh;
             padding: 25px 15px;
         }
 
         .container {
-            max-width: 1050px;
+            max-width: 850px;
             margin: 0 auto;
         }
 
-        /* Header Principal */
+        /* Header e Logotipo */
         header {
-            text-align: center;
-            margin-bottom: 30px;
-            position: relative;
+            margin-bottom: 35px;
+            padding: 10px 0;
         }
 
-        header h1 {
-            font-size: 28px;
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .logo-icon {
+            width: 52px;
+            height: 52px;
+            padding: 10px;
+            background: rgba(0, 242, 254, 0.05);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.2), inset 0 0 10px rgba(0, 242, 254, 0.1);
+            backdrop-filter: blur(8px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .logo-icon:hover {
+            transform: scale(1.05) rotate(5deg);
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.4), inset 0 0 15px rgba(0, 242, 254, 0.2);
+        }
+
+        .logo-icon svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 6px rgba(0, 242, 254, 0.6));
+        }
+
+        .logo-text {
+            text-align: left;
+        }
+
+        .logo-text h1 {
+            font-size: 26px;
             font-weight: 700;
             color: #ffffff;
-            text-shadow: 0 0 15px var(--neon-blue-glow), 0 0 30px rgba(0, 242, 254, 0.25);
             letter-spacing: -0.5px;
-            margin-bottom: 6px;
+            line-height: 1.2;
+            margin: 0;
         }
 
-        header p {
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 400;
+        .logo-text h1 span {
+            color: var(--neon-blue);
+            text-shadow: 0 0 12px var(--neon-blue-glow);
         }
 
-        /* Layout Grid */
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 22px;
+        .logo-text p {
+            color: #6b7280;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            margin-top: 4px;
         }
 
-        @media (max-width: 768px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
+        /* Layout em Coluna Única (Um embaixo do outro) */
+        .grid-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
         }
 
-        /* Cards Escuros com Efeito Vidro e Bordas Neon */
+        /* Cards Escuros */
         .card {
             background: var(--card-bg);
             backdrop-filter: blur(12px);
             border-radius: 14px;
-            padding: 22px;
+            padding: 24px;
             border: 1px solid var(--card-border);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
-            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .card:hover {
-            border-color: rgba(0, 242, 254, 0.5);
-            box-shadow: 0 10px 35px 0 rgba(0, 242, 254, 0.15);
+            border-color: rgba(0, 242, 254, 0.4);
+            box-shadow: 0 10px 30px 0 rgba(0, 242, 254, 0.1);
         }
 
         .card-header {
@@ -124,7 +156,7 @@
         }
 
         .card h3 {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-secondary);
             margin: 20px 0 10px 0;
             text-transform: uppercase;
@@ -179,7 +211,7 @@
             color: #ffffff;
         }
 
-        /* Botões com Animações Neon */
+        /* Botões */
         .btn {
             padding: 11px 18px;
             border: none;
@@ -187,8 +219,6 @@
             font-weight: 600;
             font-size: 13px;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
@@ -294,10 +324,6 @@
             color: #e5e7eb;
         }
 
-        tbody tr {
-            transition: background-color 0.2s ease;
-        }
-
         tbody tr:hover {
             background-color: rgba(0, 242, 254, 0.05);
         }
@@ -318,26 +344,52 @@
             font-weight: 600;
             text-shadow: 0 0 8px rgba(251, 191, 36, 0.4);
         }
+
+        @media (max-width: 600px) {
+            .logo-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            .logo-text {
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
+        <!-- LOGOTIPO EM SVG -->
         <header>
-            <h1>🔧 Controle de Montagem & Estoque</h1>
-            <p>Sistema de Gestão de Peças e Serviços</p>
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="url(#blue-gradient)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M19.4 15A1.65 1.65 0 0 0 20 12A1.65 1.65 0 0 0 19.4 9L21 7.4L19.6 6L18 7.6A1.65 1.65 0 0 0 15 7A1.65 1.65 0 0 0 12 4.6L12 2.5L10 2.5L10 4.6A1.65 1.65 0 0 0 7 7A1.65 1.65 0 0 0 4.6 9L3 7.4L1.6 8.8L3.2 10.4A1.65 1.65 0 0 0 3 12A1.65 1.65 0 0 0 3.6 15L2 16.6L3.4 18L5 16.4A1.65 1.65 0 0 0 8 17A1.65 1.65 0 0 0 11 19.4L11 21.5L13 21.5L13 19.4A1.65 1.65 0 0 0 16 17A1.65 1.65 0 0 0 18.4 15L20 16.6L21.4 15.2L19.4 15Z" stroke="url(#blue-gradient)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M13 8L9 13H12L11 16L15 11H12L13 8Z" fill="#00f2fe"/>
+                        <defs>
+                            <linearGradient id="blue-gradient" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#00f2fe"/>
+                                <stop offset="1" stop-color="#3b82f6"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>Controle de Montagem <span>& Estoque</span></h1>
+                    <p>SISTEMA DE GESTÃO DE PEÇAS E SERVIÇOS</p>
+                </div>
+            </div>
         </header>
 
-        <div class="grid">
-            <!-- PAINEL DE ADICIONAR ESTOQUE SEM DIGITAR -->
+        <div class="grid-vertical">
+            <!-- 1. ENTRADA DE ESTOQUE (TOPO) -->
             <div class="card">
                 <h2>📦 Entrada de Estoque</h2>
                 
                 <div class="form-group">
                     <label>Selecione a Peça (Arranque / Alternador)</label>
-                    <select id="selectPecaCadastro">
-                        <!-- Peças serão inseridas automaticamente via JS -->
-                    </select>
+                    <select id="selectPecaCadastro"></select>
                 </div>
 
                 <div class="form-group">
@@ -360,7 +412,7 @@
                 </table>
             </div>
 
-            <!-- REGISTRO DE SERVIÇO -->
+            <!-- 2. LANÇAR MONTAGEM (MEIO) -->
             <div class="card">
                 <h2>📝 Lançar Montagem</h2>
                 <div class="form-group">
@@ -399,30 +451,30 @@
 
                 <button class="btn btn-primary" onclick="salvarServico()">💾 Salvar e Dar Baixa</button>
             </div>
-        </div>
 
-        <!-- HISTÓRICO -->
-        <div class="card" style="margin-top: 20px;">
-            <div class="card-header">
-                <h2>📋 Histórico de Serviços</h2>
-                <button class="btn btn-secondary" onclick="gerarPDF()">📄 Exportar PDF</button>
-            </div>
-            
-            <div class="form-group">
-                <input type="text" id="busca" placeholder="🔍 Buscar por Prefixo ou Data..." onkeyup="filtrarHistorico()">
-            </div>
+            <!-- 3. HISTÓRICO DE SERVIÇOS (EMBAIXO) -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>📋 Histórico de Serviços</h2>
+                    <button class="btn btn-secondary" onclick="gerarPDF()">📄 Exportar PDF</button>
+                </div>
+                
+                <div class="form-group">
+                    <input type="text" id="busca" placeholder="🔍 Buscar por Prefixo ou Data..." onkeyup="filtrarHistorico()">
+                </div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Prefixo</th>
-                        <th>Peças Utilizadas</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="listaHistorico"></tbody>
-            </table>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Prefixo</th>
+                            <th>Peças Utilizadas</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaHistorico"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
