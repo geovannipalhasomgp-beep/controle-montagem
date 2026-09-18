@@ -17,13 +17,14 @@
         }
 
         :root {
-            --bg-main: #0b0f19;
-            --card-bg: rgba(17, 24, 39, 0.85);
-            --card-border: rgba(59, 130, 246, 0.25);
+            /* Fundo Totalmente Escuro / Preto Profundo */
+            --bg-main: #0a0a0c;
+            --card-bg: rgba(18, 18, 22, 0.95);
+            --card-border: rgba(0, 242, 254, 0.2);
             --text-primary: #f3f4f6;
             --text-secondary: #9ca3af;
             
-            /* Cores Neon Azul */
+            /* Cores Neon e Destaque Azul */
             --neon-blue: #00f2fe;
             --neon-blue-glow: rgba(0, 242, 254, 0.4);
             --accent-blue: #3b82f6;
@@ -39,11 +40,10 @@
         body {
             background-color: var(--bg-main);
             background-image: 
-                radial-gradient(circle at 15% 15%, rgba(0, 242, 254, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
-                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+                radial-gradient(circle at 50% 0%, rgba(0, 242, 254, 0.05) 0%, transparent 50%),
+                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
             color: var(--text-primary);
             min-height: 100vh;
             padding: 25px 15px;
@@ -65,7 +65,7 @@
             font-size: 28px;
             font-weight: 700;
             color: #ffffff;
-            text-shadow: 0 0 15px var(--neon-blue-glow), 0 0 30px rgba(0, 242, 254, 0.2);
+            text-shadow: 0 0 15px var(--neon-blue-glow), 0 0 30px rgba(0, 242, 254, 0.25);
             letter-spacing: -0.5px;
             margin-bottom: 6px;
         }
@@ -89,19 +89,19 @@
             }
         }
 
-        /* Cards Estilizados com Efeito Vidro (Glassmorphism) */
+        /* Cards Escuros com Efeito Vidro e Bordas Neon */
         .card {
             background: var(--card-bg);
             backdrop-filter: blur(12px);
             border-radius: 14px;
             padding: 22px;
             border: 1px solid var(--card-border);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
             transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .card:hover {
-            border-color: rgba(0, 242, 254, 0.45);
+            border-color: rgba(0, 242, 254, 0.5);
             box-shadow: 0 10px 35px 0 rgba(0, 242, 254, 0.15);
         }
 
@@ -120,7 +120,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            text-shadow: 0 0 8px var(--neon-blue-glow);
+            text-shadow: 0 0 10px var(--neon-blue-glow);
         }
 
         .card h3 {
@@ -149,13 +149,14 @@
             margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 0.8px;
+            text-shadow: 0 0 5px rgba(0, 242, 254, 0.3);
         }
 
         input, select {
             width: 100%;
             padding: 11px 14px;
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            background: #121216;
+            border: 1px solid rgba(0, 242, 254, 0.25);
             border-radius: 8px;
             font-size: 14px;
             color: #ffffff;
@@ -164,17 +165,17 @@
         }
 
         input::placeholder {
-            color: #6b7280;
+            color: #52525b;
         }
 
         input:focus, select:focus {
             border-color: var(--neon-blue);
-            box-shadow: 0 0 12px var(--neon-blue-glow);
-            background: rgba(15, 23, 42, 0.95);
+            box-shadow: 0 0 14px var(--neon-blue-glow);
+            background: #18181c;
         }
 
         select option {
-            background-color: #0f172a;
+            background-color: #121216;
             color: #ffffff;
         }
 
@@ -201,17 +202,17 @@
         }
 
         .btn-add {
-            background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(59, 130, 246, 0.25));
+            background: rgba(0, 242, 254, 0.08);
             color: var(--neon-blue);
             border: 1px solid var(--neon-blue);
             width: 100%;
             margin-bottom: 16px;
-            box-shadow: 0 0 10px rgba(0, 242, 254, 0.15);
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.1);
         }
 
         .btn-add:hover {
-            background: linear-gradient(135deg, var(--neon-blue), var(--accent-blue));
-            color: #090d16;
+            background: var(--neon-blue);
+            color: #050507;
             font-weight: 700;
             box-shadow: 0 0 20px var(--neon-blue-glow), 0 0 30px rgba(0, 242, 254, 0.4);
             transform: translateY(-2px);
@@ -275,13 +276,14 @@
         }
 
         th {
-            background-color: rgba(15, 23, 42, 0.8);
+            background-color: #121216;
             color: var(--neon-blue);
             font-weight: 600;
             text-transform: uppercase;
             font-size: 11px;
             letter-spacing: 0.8px;
-            border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+            border-bottom: 2px solid rgba(0, 242, 254, 0.3);
+            text-shadow: 0 0 5px rgba(0, 242, 254, 0.3);
         }
 
         th:first-child { border-top-left-radius: 6px; }
@@ -297,7 +299,7 @@
         }
 
         tbody tr:hover {
-            background-color: rgba(59, 130, 246, 0.08);
+            background-color: rgba(0, 242, 254, 0.05);
         }
 
         .tabela-compacta th, .tabela-compacta td {
@@ -694,7 +696,7 @@
                 head: [['Data', 'Prefixo', 'Peças Utilizadas']],
                 body: dadosTabela,
                 theme: 'grid',
-                headStyles: { fillColor: [52, 73, 94] }
+                headStyles: { fillColor: [18, 18, 22] }
             });
 
             doc.save(`relatorio_montagens_${new Date().toISOString().slice(0,10)}.pdf`);
