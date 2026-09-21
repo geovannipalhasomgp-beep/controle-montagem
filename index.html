@@ -161,6 +161,75 @@
             gap: 8px;
         }
 
+        /* GARAGENS - NOVO COMPONENTE */
+        .garagens-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .garagem-card {
+            background: #0b0e14;
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .garagem-nome {
+            font-size: 14px;
+            font-weight: 800;
+            color: #ffffff;
+            border-bottom: 1px solid rgba(0, 210, 255, 0.2);
+            padding-bottom: 6px;
+        }
+
+        .garagem-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .garagem-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .garagem-counter {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-counter {
+            background: #1e2638;
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-counter:hover {
+            background: var(--blue-bright);
+        }
+
+        .count-val {
+            min-width: 24px;
+            text-align: center;
+            font-weight: 700;
+            color: var(--blue-cyan);
+        }
+
         /* FORMULÁRIOS & INPUTS */
         .form-grid {
             display: grid;
@@ -382,7 +451,7 @@
 
     <div class="container">
 
-        <!-- CABEÇALHO SASHBOARD -->
+        <!-- CABEÇALHO DASHBOARD -->
         <div class="top-header">
             <div class="header-brand">
                 <div class="header-icon">
@@ -398,6 +467,83 @@
             <div class="status-badge">
                 <span class="status-dot"></span>
                 Oficina Online
+            </div>
+        </div>
+
+        <!-- NOVO: CONTROLADOR DE MOTORES E ALTERNADORES NAS GARAGENS -->
+        <div class="card">
+            <h2 class="card-title">🚌 Estoque Prontos nas Garagens</h2>
+            <div class="garagens-grid">
+
+                <!-- TaipasTur -->
+                <div class="garagem-card">
+                    <div class="garagem-nome">TaipasTur</div>
+                    <div class="garagem-controls">
+                        <div class="garagem-item">
+                            <span>Arranques:</span>
+                            <div class="garagem-counter">
+                                <button class="btn-counter" onclick="alterarGaragem('taipasTur', 'arranque', -1)">-</button>
+                                <span class="count-val" id="val-taipasTur-arranque">0</span>
+                                <button class="btn-counter" onclick="alterarGaragem('taipasTur', 'arranque', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="garagem-item">
+                            <span>Alternadores:</span>
+                            <div class="garagem-counter">
+                                <button class="btn-counter" onclick="alterarGaragem('taipasTur', 'alternador', -1)">-</button>
+                                <span class="count-val" id="val-taipasTur-alternador">0</span>
+                                <button class="btn-counter" onclick="alterarGaragem('taipasTur', 'alternador', 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TaipasTur Jandira -->
+                <div class="garagem-card">
+                    <div class="garagem-nome">TaipasTur Jandira</div>
+                    <div class="garagem-controls">
+                        <div class="garagem-item">
+                            <span>Arranques:</span>
+                            <div class="garagem-counter">
+                                <button class="btn-counter" onclick="alterarGaragem('jandira', 'arranque', -1)">-</button>
+                                <span class="count-val" id="val-jandira-arranque">0</span>
+                                <button class="btn-counter" onclick="alterarGaragem('jandira', 'arranque', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="garagem-item">
+                            <span>Alternadores:</span>
+                            <div class="garagem-counter">
+                                <button class="btn-counter" onclick="alterarGaragem('jandira', 'alternador', -1)">-</button>
+                                <span class="count-val" id="val-jandira-alternador">0</span>
+                                <button class="btn-counter" onclick="alterarGaragem('jandira', 'alternador', 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TaipasTur Caterose -->
+                <div class="garagem-card">
+                    <div class="garagem-nome">TaipasTur Caterose</div>
+                    <div class="garagem-controls">
+                        <div class="garagem-item">
+                            <span>Arranques:</span>
+                            <div class="garagem-counter">
+                                <button class="btn-counter" onclick="alterarGaragem('caterose', 'arranque', -1)">-</button>
+                                <span class="count-val" id="val-caterose-arranque">0</span>
+                                <button class="btn-counter" onclick="alterarGaragem('caterose', 'arranque', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="garagem-item">
+                            <span>Alternadores:</span>
+                            <div class="garagem-counter">
+                                <button class="btn-counter" onclick="alterarGaragem('caterose', 'alternador', -1)">-</button>
+                                <span class="count-val" id="val-caterose-alternador">0</span>
+                                <button class="btn-counter" onclick="alterarGaragem('caterose', 'alternador', 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -548,6 +694,13 @@
         let historico = JSON.parse(localStorage.getItem('historicoServicos')) || [];
         let pecasDoServicoAtual = [];
 
+        // Controle de Garagens
+        let estoqueGaragens = JSON.parse(localStorage.getItem('estoqueGaragens')) || {
+            taipasTur: { arranque: 0, alternador: 0 },
+            jandira: { arranque: 0, alternador: 0 },
+            caterose: { arranque: 0, alternador: 0 }
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             const inputData = document.getElementById('dataServico');
             if (inputData) inputData.valueAsDate = new Date();
@@ -555,7 +708,27 @@
             carregarOpcoesCadastro();
             renderizarEstoque();
             renderizarHistorico();
+            renderizarGaragens();
         });
+
+        function renderizarGaragens() {
+            for (let gar in estoqueGaragens) {
+                for (let item in estoqueGaragens[gar]) {
+                    const el = document.getElementById(`val-${gar}-${item}`);
+                    if (el) el.innerText = estoqueGaragens[gar][item];
+                }
+            }
+        }
+
+        function alterarGaragem(garagem, item, delta) {
+            if (!estoqueGaragens[garagem]) return;
+            let val = estoqueGaragens[garagem][item] + delta;
+            if (val < 0) val = 0;
+            estoqueGaragens[garagem][item] = val;
+            
+            localStorage.setItem('estoqueGaragens', JSON.stringify(estoqueGaragens));
+            renderizarGaragens();
+        }
 
         function carregarOpcoesCadastro() {
             const select = document.getElementById('selectPecaCadastro');
@@ -725,103 +898,127 @@
             });
 
             localStorage.setItem('historicoServicos', JSON.stringify(historico));
-
-            if (alertasCompra.length > 0) {
-                alert(`Serviço salvo com sucesso!\n\n⚠️ ESTOQUE CRÍTICO:\nComprar reposição para:\n- ${alertasCompra.join('\n- ')}`);
-            } else {
-                alert("Serviço registrado e estoque atualizado com sucesso!");
-            }
-
-            document.getElementById('prefixo').value = '';
-            pecasDoServicoAtual = [];
-            renderizarPecasServicoTemp();
+            
             renderizarEstoque();
             renderizarHistorico();
+
+            pecasDoServicoAtual = [];
+            document.getElementById('prefixo').value = '';
+            renderizarPecasServicoTemp();
+
+            if (alertasCompra.length > 0) {
+                alert("Serviço salvo com sucesso!\n\n⚠️ ALERTA DE ESTOQUE BAIXO:\n" + alertasCompra.join('\n'));
+            } else {
+                alert("Serviço registrado e estoque atualizado!");
+            }
         }
 
         function renderizarHistorico(listaParaExibir = historico) {
-            const tabela = document.getElementById('listaHistorico');
-            if (!tabela) return;
-            
-            tabela.innerHTML = '';
+            const lista = document.getElementById('listaHistorico');
+            if (!lista) return;
+
+            lista.innerHTML = '';
 
             if (listaParaExibir.length === 0) {
-                tabela.innerHTML = '<tr><td colspan="4" style="color: #475569; font-style: italic;">Nenhum registro de serviço encontrado.</td></tr>';
+                lista.innerHTML = '<tr><td colspan="4" style="color: #475569; font-style: italic;">Nenhum registro encontrado.</td></tr>';
                 return;
             }
 
-            listaParaExibir.slice().reverse().forEach(item => {
-                const pecasTexto = item.pecas.map(p => `${p.nome} (${p.qtd}x)`).join(', ');
-                const dataFormatada = item.data.split('-').reverse().join('/');
+            const ordenado = [...listaParaExibir].reverse();
 
-                tabela.innerHTML += `
+            ordenado.forEach(item => {
+                const dataFormatada = item.data.split('-').reverse().join('/');
+                const pecasStr = item.pecas.map(p => `${p.nome} (${p.qtd}x)`).join(', ');
+
+                lista.innerHTML += `
                     <tr>
-                        <td>${dataFormatada}</td>
-                        <td><b>${item.prefixo}</b> <span style="font-size: 11px; color: var(--text-muted);">(${item.tipo || 'Geral'})</span></td>
-                        <td>${pecasTexto}</td>
-                        <td><button class="btn-danger" onclick="removerHistorico(${item.id})">🗑️</button></td>
+                        <td><b>${dataFormatada}</b></td>
+                        <td><span style="color: var(--blue-cyan); font-weight:700;">${item.tipo}</span><br><small style="color: #94a3b8">${item.prefixo}</small></td>
+                        <td>${pecasStr}</td>
+                        <td><button class="btn-danger" onclick="excluirHistorico(${item.id})">🗑️ Excluir</button></td>
                     </tr>
                 `;
             });
         }
 
-        function removerHistorico(id) {
-            if (confirm("Deseja realmente apagar este registro do histórico?")) {
-                historico = historico.filter(item => item.id !== id);
-                localStorage.setItem('historicoServicos', JSON.stringify(historico));
-                filtrarHistorico();
-            }
-        }
-
         function filtrarHistorico() {
-            const buscaPrefixo = document.getElementById('buscaPrefixo').value.toLowerCase().trim();
-            const buscaData = document.getElementById('buscaData').value;
+            const termo = document.getElementById('buscaPrefixo').value.toLowerCase().trim();
+            const dataFiltro = document.getElementById('buscaData').value;
 
-            const resultado = historico.filter(item => {
-                const bateuPrefixo = item.prefixo.toLowerCase().includes(buscaPrefixo);
-                const bateuData = !buscaData || item.data === buscaData;
-                return bateuPrefixo && bateuData;
+            const filtrado = historico.filter(item => {
+                const batePrefixo = item.prefixo.toLowerCase().includes(termo);
+                const bateData = dataFiltro ? item.data === dataFiltro : true;
+                return batePrefixo && bateData;
             });
 
-            renderizarHistorico(resultado);
+            renderizarHistorico(filtrado);
+        }
+
+        function excluirHistorico(id) {
+            if (!confirm("Tem certeza que deseja excluir este registro do histórico?")) return;
+
+            historico = historico.filter(item => item.id !== id);
+            localStorage.setItem('historicoServicos', JSON.stringify(historico));
+            filtrarHistorico();
         }
 
         function gerarPDF() {
-            const buscaPrefixo = document.getElementById('buscaPrefixo').value.toLowerCase().trim();
-            const buscaData = document.getElementById('buscaData').value;
-
-            const dadosParaExportar = historico.filter(item => {
-                const bateuPrefixo = item.prefixo.toLowerCase().includes(buscaPrefixo);
-                const bateuData = !buscaData || item.data === buscaData;
-                return bateuPrefixo && bateuData;
-            });
-
-            if (dadosParaExportar.length === 0) {
-                alert("Nenhum registro encontrado para exportar.");
+            if (historico.length === 0) {
+                alert("Não há dados no histórico para gerar o PDF.");
                 return;
             }
 
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            doc.setFontSize(16);
-            doc.text("RELATÓRIO DE MONTAGENS E MANUTENÇÃO", 14, 15);
+            doc.setFillColor(10, 12, 16);
+            doc.rect(0, 0, 210, 297, 'F');
 
-            const dadosTabela = dadosParaExportar.map(item => [
+            doc.setTextColor(0, 210, 255);
+            doc.setFontSize(18);
+            doc.setFont("helvetica", "bold");
+            doc.text("RELATÓRIO DE MONTAGEM E ESTOQUE", 14, 20);
+
+            doc.setTextColor(200, 200, 200);
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR')}`, 14, 28);
+
+            // Tabela de Garagens no PDF
+            const bodyGaragens = [
+                ['TaipasTur', `${estoqueGaragens.taipasTur.arranque} un`, `${estoqueGaragens.taipasTur.alternador} un`],
+                ['TaipasTur Jandira', `${estoqueGaragens.jandira.arranque} un`, `${estoqueGaragens.jandira.alternador} un`],
+                ['TaipasTur Caterose', `${estoqueGaragens.caterose.arranque} un`, `${estoqueGaragens.caterose.alternador} un`]
+            ];
+
+            doc.autoTable({
+                startY: 34,
+                head: [['GARAGEM', 'ARRANQUES PRONTOS', 'ALTERNADORES PRONTOS']],
+                body: bodyGaragens,
+                theme: 'grid',
+                headStyles: { fillStyle: [0, 153, 255], textColor: [255, 255, 255], fontStyle: 'bold' },
+                bodyStyles: { fillColor: [18, 22, 31], textColor: [203, 213, 225] },
+                alternateRowStyles: { fillColor: [15, 18, 25] },
+            });
+
+            // Tabela do Histórico
+            const bodyHistorico = historico.map(item => [
                 item.data.split('-').reverse().join('/'),
-                `${item.prefixo} (${item.tipo || 'Geral'})`,
+                `${item.tipo} - ${item.prefixo}`,
                 item.pecas.map(p => `${p.nome} (${p.qtd}x)`).join('\n')
             ]);
 
             doc.autoTable({
-                startY: 25,
-                head: [['Data', 'Prefixo / Tipo', 'Peças Utilizadas']],
-                body: dadosTabela,
+                startY: doc.lastAutoTable.finalY + 10,
+                head: [['DATA', 'EQUIPAMENTO / PREFIXO', 'PEÇAS UTILIZADAS']],
+                body: bodyHistorico,
                 theme: 'grid',
-                headStyles: { fillColor: [18, 22, 31] }
+                headStyles: { fillStyle: [0, 153, 255], textColor: [255, 255, 255], fontStyle: 'bold' },
+                bodyStyles: { fillColor: [18, 22, 31], textColor: [203, 213, 225] },
+                alternateRowStyles: { fillColor: [15, 18, 25] },
             });
 
-            doc.save(`relatorio_servicos_${new Date().toISOString().slice(0,10)}.pdf`);
+            doc.save(`relatorio_montagem_${Date.now()}.pdf`);
         }
     </script>
 </body>
