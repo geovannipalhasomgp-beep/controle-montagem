@@ -335,6 +335,24 @@
             transform: translateY(-1px);
         }
 
+        .btn-action-small {
+            background: #1e2638;
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            color: #38bdf8;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 700;
+            transition: all 0.2s;
+            margin-right: 4px;
+        }
+
+        .btn-action-small:hover {
+            background: var(--blue-bright);
+            color: #ffffff;
+        }
+
         .btn-danger {
             background: rgba(239, 68, 68, 0.15);
             border: 1px solid rgba(239, 68, 68, 0.3);
@@ -342,7 +360,8 @@
             padding: 4px 8px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
+            font-weight: 700;
             transition: all 0.2s;
         }
 
@@ -564,7 +583,11 @@
 
             <button class="btn btn-blue" style="margin-bottom: 20px;" onclick="adicionarEstoque()">+ Adicionar ao Estoque Geral</button>
 
-            <label>Saldo Atual do Estoque:</label>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <label>Saldo Atual do Estoque:</label>
+                <button class="btn-danger" style="font-size: 11px; padding: 4px 10px;" onclick="zerarTodoEstoque()">⚠️ Zerar Todo o Estoque</button>
+            </div>
+
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -572,6 +595,7 @@
                             <th>PEÇA & CÓDIGO</th>
                             <th>QTD ATUAL</th>
                             <th>STATUS</th>
+                            <th style="text-align: right;">AÇÕES</th>
                         </tr>
                     </thead>
                     <tbody id="listaEstoque"></tbody>
@@ -669,7 +693,7 @@
     </div>
 
     <script>
-        // CATÁLOGO DE PEÇAS E CÓDIGOS
+        // CATÁLOGO COMPLETO DE PEÇAS E CÓDIGOS
         const CATALOGO_COMPLETO = [
             // Peças do Arranque
             { nome: "Bobina", codigo: "12010043" },
@@ -703,9 +727,18 @@
             { nome: "Bucha", codigo: "12010666" }
         ];
 
+        // INICIALIZAÇÃO DE DADOS DO LOCALSTORAGE
         let estoque = JSON.parse(localStorage.getItem('estoquePeças')) || {};
         let historico = JSON.parse(localStorage.getItem('historicoServicos')) || [];
         let pecasDoServicoAtual = [];
+
+        // Garante que todas as peças do catálogo existam na estrutura do estoque
+        CATALOGO_COMPLETO.forEach(peca => {
+            if (estoque[peca.nome] === undefined) {
+                estoque[peca.nome] = 0;
+            }
+        });
+        localStorage.setItem('estoquePeças', JSON.stringify(estoque));
 
         // Controle de Garagens
         let estoqueGaragens = JSON.parse(localStorage.getItem('estoqueGaragens')) || {
@@ -752,10 +785,7 @@
             selectServ.innerHTML = '<option value="">-- Selecione a Peça --</option>';
 
             CATALOGO_COMPLETO.forEach(pecaObj => {
-                // No cadastro de Estoque, exibe o Nome + Código
                 selectCad.innerHTML += `<option value="${pecaObj.nome}">${pecaObj.nome} - ${pecaObj.codigo}</option>`;
-                
-                // Na Montagem do Serviço, exibe SOMENTE o Nome
                 selectServ.innerHTML += `<option value="${pecaObj.nome}">${pecaObj.nome}</option>`;
             });
         }
@@ -784,6 +814,40 @@
             select.value = "";
         }
 
+        function editarQuantidadePeca(nomePeca) {
+            const qtdAtual = estoque[nomePeca] || 0;
+            const novaQtd = prompt(`Digite a nova quantidade exata para "${nomePeca}":`, qtdAtual);
+
+            if (novaQtd !== null) {
+                const val = parseInt(novaQtd);
+                if (!isNaN(val) && val >= 0) {
+                    estoque[nomePeca] = val;
+                    localStorage.setItem('estoquePeças', JSON.stringify(estoque));
+                    renderizarEstoque();
+                } else {
+                    alert("Por favor, insira um número válido maior ou igual a zero.");
+                }
+            }
+        }
+
+        function zerarPeca(nomePeca) {
+            if (confirm(`Tem certeza que deseja zerar o estoque de "${nomePeca}"?`)) {
+                estoque[nomePeca] = 0;
+                localStorage.setItem('estoquePeças', JSON.stringify(estoque));
+                renderizarEstoque();
+            }
+        }
+
+        function zerarTodoEstoque() {
+            if (confirm("ATENÇÃO: Deseja zerar a quantidade de TODAS as peças do estoque?")) {
+                CATALOGO_COMPLETO.forEach(peca => {
+                    estoque[peca.nome] = 0;
+                });
+                localStorage.setItem('estoquePeças', JSON.stringify(estoque));
+                renderizarEstoque();
+            }
+        }
+
         function renderizarEstoque() {
             const tbody = document.getElementById('listaEstoque');
             if (!tbody) return;
@@ -796,11 +860,14 @@
                     : `<span class="badge-alert">Esgotado</span>`;
 
                 const tr = document.createElement('tr');
-                // Exibe Nome + Código no Estoque
                 tr.innerHTML = `
                     <td style="font-weight: 600;">${pecaObj.nome} <span style="color: var(--blue-cyan); font-size: 12px; margin-left: 5px;">(${pecaObj.codigo})</span></td>
                     <td style="font-weight: 700;">${qtd} un</td>
                     <td>${statusBadge}</td>
+                    <td style="text-align: right; white-space: nowrap;">
+                        <button class="btn-action-small" onclick="editarQuantidadePeca('${pecaObj.nome}')">Editar</button>
+                        <button class="btn-danger" onclick="zerarPeca('${pecaObj.nome}')">Zerar</button>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -832,7 +899,6 @@
                 return;
             }
 
-            // Na Montagem guarda SOMENTE o Nome
             pecasDoServicoAtual.push({ nome: nomePeca, qtd: qtd });
             renderizarPecasServicoTemp();
 
@@ -857,7 +923,6 @@
             tbody.innerHTML = '';
             pecasDoServicoAtual.forEach((item, index) => {
                 const tr = document.createElement('tr');
-                // Exibe SOMENTE o Nome da peça
                 tr.innerHTML = `
                     <td style="font-weight: 600;">${item.nome}</td>
                     <td>${item.qtd} un</td>
@@ -933,11 +998,9 @@
             }
 
             lista.forEach(reg => {
-                // Formatação simples da data
                 const partData = reg.data.split('-');
                 const dataFmt = partData.length === 3 ? `${partData[2]}/${partData[1]}/${partData[0]}` : reg.data;
 
-                // Formatação da lista de peças (somente Nomes)
                 const pecasStr = reg.pecas.map(p => `${p.nome} (${p.qtd}x)`).join(', ');
 
                 const tr = document.createElement('tr');
