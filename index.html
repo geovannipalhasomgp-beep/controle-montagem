@@ -161,7 +161,7 @@
             gap: 8px;
         }
 
-        /* GARAGENS - NOVO COMPONENTE */
+        /* GARAGENS */
         .garagens-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -351,7 +351,7 @@
             color: #ffffff;
         }
 
-        /* PEÇAS INCLUÍDAS - CONTAINER STYLED */
+        /* PEÇAS INCLUÍDAS */
         .pecas-box {
             background: var(--input-bg);
             border: 1px solid var(--input-border);
@@ -470,7 +470,7 @@
             </div>
         </div>
 
-        <!-- NOVO: CONTROLADOR DE MOTORES E ALTERNADORES NAS GARAGENS -->
+        <!-- CONTROLADOR DE MOTORES E ALTERNADORES NAS GARAGENS -->
         <div class="card">
             <h2 class="card-title">🚌 Estoque Prontos nas Garagens</h2>
             <div class="garagens-grid">
@@ -547,7 +547,7 @@
             </div>
         </div>
 
-        <!-- 1. ENTRADA DE ESTOQUE (TOPO) -->
+        <!-- 1. ENTRADA DE ESTOQUE -->
         <div class="card">
             <h2 class="card-title">📦 Entrada de Estoque de Peças</h2>
             
@@ -569,7 +569,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>PEÇA</th>
+                            <th>PEÇA & CÓDIGO</th>
                             <th>QTD ATUAL</th>
                             <th>STATUS</th>
                         </tr>
@@ -579,9 +579,9 @@
             </div>
         </div>
 
-        <!-- 2. NOVO REGISTRO DE SERVIÇO (MEIO) -->
+        <!-- 2. NOVO REGISTRO DE SERVIÇO -->
         <div class="card">
-            <h2 class="card-title">Novo Registro de Serviço</h2>
+            <h2 class="card-title">🛠️ Novo Registro de Serviço / Montagem</h2>
 
             <div class="form-grid">
                 <div class="form-group">
@@ -633,10 +633,10 @@
             <button class="btn btn-blue" onclick="salvarServico()">Salvar Serviço Completo</button>
         </div>
 
-        <!-- 3. HISTÓRICO DE MOVIMENTAÇÕES (BASE) -->
+        <!-- 3. HISTÓRICO DE MOVIMENTAÇÕES -->
         <div class="card">
             <div class="card-header-flex">
-                <h2 class="card-title" style="margin-bottom: 0;">Histórico de Movimentações</h2>
+                <h2 class="card-title" style="margin-bottom: 0;">📋 Histórico de Movimentações</h2>
                 <button class="btn btn-pink" onclick="gerarPDF()">Gerar Relatório em PDF</button>
             </div>
 
@@ -669,25 +669,38 @@
     </div>
 
     <script>
-        const CATALAGO_PECAS = [
-            // Arranque
-            "BENDIX (PINHÃO)",
-            "AUTOMÁTICO DO ARRANQUE",
-            "RELÉ DO AUTOMÁTICO",
-            "INDUZIDO (ARRANQUE)",
-            "PORTA ESCOVAS (ARRANQUE)",
-            "BOBINA DE CAMPO",
-            "MANCAL DIANTEIRO",
-            "MANCAL TRASEIRO",
-            // Alternador
-            "REGULADOR DE VOLTAGEM",
-            "PLACA DE DIODOS (RETIFICADORA)",
-            "ROTOR (ALTERNADOR)",
-            "ESTATOR (ALTERNADOR)",
-            "ROLAMENTO DIANTEIRO",
-            "ROLAMENTO TRASEIRO",
-            "POLIA DO ALTERNADOR",
-            "PORTA ESCOVAS (ALTERNADOR)"
+        // CATÁLOGO DE PEÇAS E CÓDIGOS
+        const CATALOGO_COMPLETO = [
+            // Peças do Arranque
+            { nome: "Bobina", codigo: "12010043" },
+            { nome: "Induzido", codigo: "12010143" },
+            { nome: "Automático", codigo: "12010027" },
+            { nome: "Rele do Automático", codigo: "12010029" },
+            { nome: "Porta Escova", codigo: "12010233" },
+            { nome: "Garfo", codigo: "12010136" },
+            { nome: "Bendix", codigo: "12010034" },
+            { nome: "Tampa traz", codigo: "12010411" },
+            { nome: "Parafuso Grande", codigo: "12010520" },
+            { nome: "Rolamento 6204", codigo: "01010488" },
+            { nome: "Rolamento 6200", codigo: "12010499" },
+            { nome: "Reparo", codigo: "12010519" },
+            { nome: "Planetária", codigo: "12010220" },
+            { nome: "Fucinho", codigo: "12010131" },
+            
+            // Peças do Alternador
+            { nome: "Tampa Diant", codigo: "12010508" },
+            { nome: "Tampa Traz", codigo: "12010516" },
+            { nome: "Rolamento menor", codigo: "12010330" },
+            { nome: "Romento maior", codigo: "12010326" },
+            { nome: "Estator", codigo: "12010762" },
+            { nome: "Rotor", codigo: "12010763" },
+            { nome: "Placa Retif", codigo: "12010217" },
+            { nome: "Regulador", codigo: "12010274" },
+            { nome: "Anel de ajuste", codigo: "12010008" },
+            { nome: "Capa proteção", codigo: "12010512" },
+            { nome: "Polia", codigo: "12010222" },
+            { nome: "Reparo Alternador", codigo: "12010302" },
+            { nome: "Bucha", codigo: "12010666" }
         ];
 
         let estoque = JSON.parse(localStorage.getItem('estoquePeças')) || {};
@@ -705,7 +718,7 @@
             const inputData = document.getElementById('dataServico');
             if (inputData) inputData.valueAsDate = new Date();
             
-            carregarOpcoesCadastro();
+            carregarOpcoesDropdowns();
             renderizarEstoque();
             renderizarHistorico();
             renderizarGaragens();
@@ -730,13 +743,20 @@
             renderizarGaragens();
         }
 
-        function carregarOpcoesCadastro() {
-            const select = document.getElementById('selectPecaCadastro');
-            if (!select) return;
+        function carregarOpcoesDropdowns() {
+            const selectCad = document.getElementById('selectPecaCadastro');
+            const selectServ = document.getElementById('selectPecaServico');
+            if (!selectCad || !selectServ) return;
 
-            select.innerHTML = '<option value="">-- Selecione a Peça --</option>';
-            CATALAGO_PECAS.forEach(peca => {
-                select.innerHTML += `<option value="${peca}">${peca}</option>`;
+            selectCad.innerHTML = '<option value="">-- Selecione a Peça --</option>';
+            selectServ.innerHTML = '<option value="">-- Selecione a Peça --</option>';
+
+            CATALOGO_COMPLETO.forEach(pecaObj => {
+                // No cadastro de Estoque, exibe o Nome + Código
+                selectCad.innerHTML += `<option value="${pecaObj.nome}">${pecaObj.nome} - ${pecaObj.codigo}</option>`;
+                
+                // Na Montagem do Serviço, exibe SOMENTE o Nome
+                selectServ.innerHTML += `<option value="${pecaObj.nome}">${pecaObj.nome}</option>`;
             });
         }
 
@@ -744,161 +764,153 @@
             const select = document.getElementById('selectPecaCadastro');
             const inputQtd = document.getElementById('qtdPecaEstoque');
             
-            const peca = select.value;
+            const nomePeca = select.value;
             const qtd = parseInt(inputQtd.value);
 
-            if (!peca) {
-                alert("Selecione uma peça da lista!");
+            if (!nomePeca) {
+                alert("Por favor, selecione uma peça!");
                 return;
             }
-
             if (isNaN(qtd) || qtd <= 0) {
                 alert("Informe uma quantidade válida!");
                 return;
             }
 
-            estoque[peca] = (estoque[peca] || 0) + qtd;
-            inputQtd.value = 1;
-            select.value = '';
-            
+            estoque[nomePeca] = (estoque[nomePeca] || 0) + qtd;
+            localStorage.setItem('estoquePeças', JSON.stringify(estoque));
+
             renderizarEstoque();
+            inputQtd.value = 1;
+            select.value = "";
         }
 
         function renderizarEstoque() {
-            const lista = document.getElementById('listaEstoque');
-            const selectServico = document.getElementById('selectPecaServico');
-            
-            if (lista) lista.innerHTML = '';
-            if (selectServico) selectServico.innerHTML = '<option value="">-- Selecione a Peça --</option>';
+            const tbody = document.getElementById('listaEstoque');
+            if (!tbody) return;
+            tbody.innerHTML = '';
 
-            let possuiItens = false;
+            CATALOGO_COMPLETO.forEach(pecaObj => {
+                const qtd = estoque[pecaObj.nome] || 0;
+                const statusBadge = qtd > 0 
+                    ? `<span class="badge-ok">Disponível</span>` 
+                    : `<span class="badge-alert">Esgotado</span>`;
 
-            for (let peca in estoque) {
-                const qtd = estoque[peca];
-                if (qtd <= 0) continue;
-
-                possuiItens = true;
-                let status = '<span class="badge-ok">OK</span>';
-                
-                if (qtd <= 1) {
-                    status = '<span class="badge-alert">⚠️ COMPRAR</span>';
-                }
-
-                if (lista) {
-                    lista.innerHTML += `
-                        <tr>
-                            <td><b>${peca}</b></td>
-                            <td>${qtd} un</td>
-                            <td>${status}</td>
-                        </tr>
-                    `;
-                }
-
-                if (selectServico) {
-                    selectServico.innerHTML += `<option value="${peca}">${peca} (${qtd} em estoque)</option>`;
-                }
-            }
-
-            if (!possuiItens && lista) {
-                lista.innerHTML = '<tr><td colspan="3" style="color: #475569; font-style: italic;">Nenhum item cadastrado no estoque ainda.</td></tr>';
-            }
-
-            localStorage.setItem('estoquePeças', JSON.stringify(estoque));
+                const tr = document.createElement('tr');
+                // Exibe Nome + Código no Estoque
+                tr.innerHTML = `
+                    <td style="font-weight: 600;">${pecaObj.nome} <span style="color: var(--blue-cyan); font-size: 12px; margin-left: 5px;">(${pecaObj.codigo})</span></td>
+                    <td style="font-weight: 700;">${qtd} un</td>
+                    <td>${statusBadge}</td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
         function adicionarPecaServico() {
             const select = document.getElementById('selectPecaServico');
             const inputQtd = document.getElementById('qtdUsoPeca');
-            
-            const peca = select.value;
+
+            const nomePeca = select.value;
             const qtd = parseInt(inputQtd.value);
 
-            if (!peca) {
-                alert("Selecione uma peça disponível!");
+            if (!nomePeca) {
+                alert("Selecione uma peça para a montagem!");
                 return;
             }
-
             if (isNaN(qtd) || qtd <= 0) {
-                alert("Informe uma quantidade válida.");
+                alert("Informe uma quantidade válida!");
                 return;
             }
 
-            if (qtd > estoque[peca]) {
-                alert(`Estoque insuficiente! Você possui apenas ${estoque[peca]} unidade(s).`);
+            const estoqueAtual = estoque[nomePeca] || 0;
+            const qtdJaUsadaNoForm = pecasDoServicoAtual
+                .filter(item => item.nome === nomePeca)
+                .reduce((acc, curr) => acc + curr.qtd, 0);
+
+            if ((qtdJaUsadaNoForm + qtd) > estoqueAtual) {
+                alert(`Estoque insuficiente de ${nomePeca}! Saldo atual: ${estoqueAtual} un.`);
                 return;
             }
 
-            pecasDoServicoAtual.push({ nome: peca, qtd: qtd });
-            inputQtd.value = 1;
-            select.value = '';
-            
+            // Na Montagem guarda SOMENTE o Nome
+            pecasDoServicoAtual.push({ nome: nomePeca, qtd: qtd });
             renderizarPecasServicoTemp();
+
+            select.value = "";
+            inputQtd.value = 1;
         }
 
-        function renderizarPecasServicoTemp() {
-            const tabela = document.getElementById('listaPecasTemp');
-            if (!tabela) return;
-            
-            tabela.innerHTML = '';
-
-            if (pecasDoServicoAtual.length === 0) {
-                tabela.innerHTML = '<tr><td colspan="3" style="color: #475569; font-style: italic;">Nenhuma peça selecionada ainda.</td></tr>';
-                return;
-            }
-
-            pecasDoServicoAtual.forEach((item, index) => {
-                tabela.innerHTML += `
-                    <tr>
-                        <td><b>${item.nome}</b></td>
-                        <td>${item.qtd} un</td>
-                        <td style="text-align: right;"><button class="btn-danger" onclick="removerPecaServicoTemp(${index})">🗑️ Excluir</button></td>
-                    </tr>
-                `;
-            });
-        }
-
-        function removerPecaServicoTemp(index) {
+        function removerPecaServico(index) {
             pecasDoServicoAtual.splice(index, 1);
             renderizarPecasServicoTemp();
         }
 
-        function salvarServico() {
-            const tipoEquipamento = document.getElementById('tipoEquipamento').value;
-            const prefixo = document.getElementById('prefixo').value.trim().toUpperCase();
-            const data = document.getElementById('dataServico').value;
-
-            if (!prefixo || !data) {
-                alert("Informe o Prefixo e a Data do serviço.");
-                return;
-            }
+        function renderizarPecasServicoTemp() {
+            const tbody = document.getElementById('listaPecasTemp');
+            if (!tbody) return;
 
             if (pecasDoServicoAtual.length === 0) {
-                alert("Inclua pelo menos uma peça antes de salvar.");
+                tbody.innerHTML = '<tr><td colspan="3" style="color: #475569; font-style: italic;">Nenhuma peça selecionada ainda.</td></tr>';
                 return;
             }
 
-            let alertasCompra = [];
+            tbody.innerHTML = '';
+            pecasDoServicoAtual.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                // Exibe SOMENTE o Nome da peça
+                tr.innerHTML = `
+                    <td style="font-weight: 600;">${item.nome}</td>
+                    <td>${item.qtd} un</td>
+                    <td style="text-align: right;">
+                        <button class="btn-danger" onclick="removerPecaServico(${index})">Remover</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
 
+        function salvarServico() {
+            const tipoEquipamento = document.getElementById('tipoEquipamento').value;
+            const prefixo = document.getElementById('prefixo').value.trim();
+            const dataServico = document.getElementById('dataServico').value;
+
+            if (!prefixo) {
+                alert("Por favor, preencha o Prefixo/Identificação!");
+                return;
+            }
+            if (!dataServico) {
+                alert("Por favor, selecione a Data do Serviço!");
+                return;
+            }
+            if (pecasDoServicoAtual.length === 0) {
+                alert("Adicione pelo menos uma peça para realizar a montagem!");
+                return;
+            }
+
+            // Dar baixa no estoque das peças utilizadas
             pecasDoServicoAtual.forEach(item => {
-                if (estoque[item.nome] !== undefined) {
+                if (estoque[item.nome]) {
                     estoque[item.nome] -= item.qtd;
-                    
-                    if (estoque[item.nome] <= 1) {
-                        alertasCompra.push(`${item.nome} (Sobra: ${estoque[item.nome]} un)`);
-                    }
+                    if (estoque[item.nome] < 0) estoque[item.nome] = 0;
                 }
             });
 
-            historico.push({
+            // Adiciona ao histórico (somente nome das peças)
+            const novoRegistro = {
                 id: Date.now(),
                 tipo: tipoEquipamento,
                 prefixo: prefixo,
-                data: data,
+                data: dataServico,
                 pecas: [...pecasDoServicoAtual]
-            });
+            };
 
+            historico.unshift(novoRegistro);
+
+            // Salva no LocalStorage
+            localStorage.setItem('estoquePeças', JSON.stringify(estoque));
             localStorage.setItem('historicoServicos', JSON.stringify(historico));
-            
+
+            // Atualiza Telas e Limpa Formulário
             renderizarEstoque();
             renderizarHistorico();
 
@@ -906,119 +918,90 @@
             document.getElementById('prefixo').value = '';
             renderizarPecasServicoTemp();
 
-            if (alertasCompra.length > 0) {
-                alert("Serviço salvo com sucesso!\n\n⚠️ ALERTA DE ESTOQUE BAIXO:\n" + alertasCompra.join('\n'));
-            } else {
-                alert("Serviço registrado e estoque atualizado!");
-            }
+            alert("Serviço e montagem salvos com sucesso!");
         }
 
-        function renderizarHistorico(listaParaExibir = historico) {
-            const lista = document.getElementById('listaHistorico');
-            if (!lista) return;
+        function renderizarHistorico(lista = historico) {
+            const tbody = document.getElementById('listaHistorico');
+            if (!tbody) return;
 
-            lista.innerHTML = '';
+            tbody.innerHTML = '';
 
-            if (listaParaExibir.length === 0) {
-                lista.innerHTML = '<tr><td colspan="4" style="color: #475569; font-style: italic;">Nenhum registro encontrado.</td></tr>';
+            if (lista.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="color: #475569; font-style: italic; text-align: center;">Nenhum histórico encontrado.</td></tr>';
                 return;
             }
 
-            const ordenado = [...listaParaExibir].reverse();
+            lista.forEach(reg => {
+                // Formatação simples da data
+                const partData = reg.data.split('-');
+                const dataFmt = partData.length === 3 ? `${partData[2]}/${partData[1]}/${partData[0]}` : reg.data;
 
-            ordenado.forEach(item => {
-                const dataFormatada = item.data.split('-').reverse().join('/');
-                const pecasStr = item.pecas.map(p => `${p.nome} (${p.qtd}x)`).join(', ');
+                // Formatação da lista de peças (somente Nomes)
+                const pecasStr = reg.pecas.map(p => `${p.nome} (${p.qtd}x)`).join(', ');
 
-                lista.innerHTML += `
-                    <tr>
-                        <td><b>${dataFormatada}</b></td>
-                        <td><span style="color: var(--blue-cyan); font-weight:700;">${item.tipo}</span><br><small style="color: #94a3b8">${item.prefixo}</small></td>
-                        <td>${pecasStr}</td>
-                        <td><button class="btn-danger" onclick="excluirHistorico(${item.id})">🗑️ Excluir</button></td>
-                    </tr>
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="white-space: nowrap; font-weight: 600; color: #94a3b8;">${dataFmt}</td>
+                    <td>
+                        <strong style="color: #fff;">${reg.prefixo}</strong><br>
+                        <span style="font-size: 11px; color: var(--blue-cyan);">${reg.tipo}</span>
+                    </td>
+                    <td style="font-size: 12.5px;">${pecasStr}</td>
+                    <td>
+                        <button class="btn-danger" onclick="excluirHistorico(${reg.id})">Excluir</button>
+                    </td>
                 `;
+                tbody.appendChild(tr);
             });
         }
 
-        function filtrarHistorico() {
-            const termo = document.getElementById('buscaPrefixo').value.toLowerCase().trim();
-            const dataFiltro = document.getElementById('buscaData').value;
+        function excluirHistorico(id) {
+            if (!confirm("Tem certeza que deseja excluir este registro de serviço?")) return;
 
-            const filtrado = historico.filter(item => {
-                const batePrefixo = item.prefixo.toLowerCase().includes(termo);
-                const bateData = dataFiltro ? item.data === dataFiltro : true;
-                return batePrefixo && bateData;
+            historico = historico.filter(item => item.id !== id);
+            localStorage.setItem('historicoServicos', JSON.stringify(historico));
+            renderizarHistorico();
+        }
+
+        function filtrarHistorico() {
+            const buscaPrefixo = document.getElementById('buscaPrefixo').value.toLowerCase();
+            const buscaData = document.getElementById('buscaData').value;
+
+            const filtrado = historico.filter(reg => {
+                const matchPrefixo = reg.prefixo.toLowerCase().includes(buscaPrefixo);
+                const matchData = !buscaData || reg.data === buscaData;
+                return matchPrefixo && matchData;
             });
 
             renderizarHistorico(filtrado);
         }
 
-        function excluirHistorico(id) {
-            if (!confirm("Tem certeza que deseja excluir este registro do histórico?")) return;
-
-            historico = historico.filter(item => item.id !== id);
-            localStorage.setItem('historicoServicos', JSON.stringify(historico));
-            filtrarHistorico();
-        }
-
         function gerarPDF() {
-            if (historico.length === 0) {
-                alert("Não há dados no histórico para gerar o PDF.");
-                return;
-            }
-
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            doc.setFillColor(10, 12, 16);
-            doc.rect(0, 0, 210, 297, 'F');
-
-            doc.setTextColor(0, 210, 255);
-            doc.setFontSize(18);
-            doc.setFont("helvetica", "bold");
-            doc.text("RELATÓRIO DE MONTAGEM E ESTOQUE", 14, 20);
-
-            doc.setTextColor(200, 200, 200);
+            doc.setFontSize(16);
+            doc.text("Relatório de Montagem e Serviços", 14, 20);
             doc.setFontSize(10);
-            doc.setFont("helvetica", "normal");
-            doc.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR')}`, 14, 28);
+            doc.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')}`, 14, 26);
 
-            // Tabela de Garagens no PDF
-            const bodyGaragens = [
-                ['TaipasTur', `${estoqueGaragens.taipasTur.arranque} un`, `${estoqueGaragens.taipasTur.alternador} un`],
-                ['TaipasTur Jandira', `${estoqueGaragens.jandira.arranque} un`, `${estoqueGaragens.jandira.alternador} un`],
-                ['TaipasTur Caterose', `${estoqueGaragens.caterose.arranque} un`, `${estoqueGaragens.caterose.alternador} un`]
-            ];
-
-            doc.autoTable({
-                startY: 34,
-                head: [['GARAGEM', 'ARRANQUES PRONTOS', 'ALTERNADORES PRONTOS']],
-                body: bodyGaragens,
-                theme: 'grid',
-                headStyles: { fillStyle: [0, 153, 255], textColor: [255, 255, 255], fontStyle: 'bold' },
-                bodyStyles: { fillColor: [18, 22, 31], textColor: [203, 213, 225] },
-                alternateRowStyles: { fillColor: [15, 18, 25] },
+            const tableData = historico.map(reg => {
+                const partData = reg.data.split('-');
+                const dataFmt = partData.length === 3 ? `${partData[2]}/${partData[1]}/${partData[0]}` : reg.data;
+                const pecasStr = reg.pecas.map(p => `${p.nome} (${p.qtd}x)`).join(', ');
+                return [dataFmt, reg.prefixo, reg.tipo, pecasStr];
             });
 
-            // Tabela do Histórico
-            const bodyHistorico = historico.map(item => [
-                item.data.split('-').reverse().join('/'),
-                `${item.tipo} - ${item.prefixo}`,
-                item.pecas.map(p => `${p.nome} (${p.qtd}x)`).join('\n')
-            ]);
-
             doc.autoTable({
-                startY: doc.lastAutoTable.finalY + 10,
-                head: [['DATA', 'EQUIPAMENTO / PREFIXO', 'PEÇAS UTILIZADAS']],
-                body: bodyHistorico,
+                startY: 32,
+                head: [['Data', 'Prefixo', 'Equipamento', 'Peças Utilizadas']],
+                body: tableData,
                 theme: 'grid',
-                headStyles: { fillStyle: [0, 153, 255], textColor: [255, 255, 255], fontStyle: 'bold' },
-                bodyStyles: { fillColor: [18, 22, 31], textColor: [203, 213, 225] },
-                alternateRowStyles: { fillColor: [15, 18, 25] },
+                headStyles: { fillColor: [0, 153, 255] }
             });
 
-            doc.save(`relatorio_montagem_${Date.now()}.pdf`);
+            doc.save('relatorio-montagem-servicos.pdf');
         }
     </script>
 </body>
